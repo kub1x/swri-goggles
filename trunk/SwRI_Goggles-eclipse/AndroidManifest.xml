@@ -22,6 +22,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.ttu_swri.goggles.sandbox.AlejandroSandboxActivity"
+            android:label="@string/title_activity_aleja_sandbox" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ttu_swri.goggles.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.ttu_swri.goggles.sandbox.AotuoSandboxActivity"
+            android:label="@string/title_activity_aotuo_sandbox" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ttu_swri.goggles.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.ttu_swri.goggles.sandbox.JakubSandboxActivity"
+            android:label="@string/title_activity_jakub_sandbox" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ttu_swri.goggles.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.ttu_swri.goggles.sandbox.SebastianSandboxActivity"
+            android:label="@string/title_activity_sebas_sandbox" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ttu_swri.goggles.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
