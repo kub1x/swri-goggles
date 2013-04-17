@@ -34,6 +34,9 @@ public class MainActivity extends Activity {
 		b_aotuo.setOnClickListener(butChangeView);
 		b_jakub.setOnClickListener(butChangeView);
 		b_sebas.setOnClickListener(butChangeView);
+
+		Button b_app = (Button) findViewById(R.id.but_goggles_app);
+		b_app.setOnClickListener(butChangeView);
 	}
 
 	@Override
@@ -67,6 +70,11 @@ public class MainActivity extends Activity {
 			case R.id.but_sebas:
 				startActivity(new Intent(getBaseContext(),
 						SebastianSandboxActivity.class));
+				break;
+
+			case R.id.but_goggles_app:
+				startActivity(new Intent(getBaseContext(),
+						GogglesMainActivity.class));
 				break;
 			}
 		}

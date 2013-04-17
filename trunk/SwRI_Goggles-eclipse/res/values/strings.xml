@@ -13,5 +13,7 @@
     <string name="title_activity_aotuo_sandbox">Aotuo\'s Sandbox</string>
     <string name="title_activity_jakub_sandbox">Jakub\'s Sandbox</string>
     <string name="title_activity_sebas_sandbox">Sebastian\'s Sandbox</string>
+    <string name="button_goggles_app">Final Goggles App</string>
+    <string name="title_activity_goggles_main">Goggles Main</string>
 
 </resources>

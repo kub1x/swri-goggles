@@ -50,6 +50,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ttu_swri.goggles.MainActivity" />
         </activity>
+        <activity
+            android:name="com.ttu_swri.goggles.GogglesMainActivity"
+            android:label="@string/title_activity_goggles_main" >
+        </activity>
     </application>
 
 </manifest>
