@@ -51,31 +51,36 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			switch (v.getId()) {
-			case R.id.but_aleja:
-				startActivity(new Intent(getBaseContext(),
-						AlejandroSandboxActivity.class));
-				break;
+			try {
+				switch (v.getId()) {
+				case R.id.but_aleja:
+					startActivity(new Intent(getBaseContext(),
+							AlejandroSandboxActivity.class));
+					break;
 
-			case R.id.but_aotuo:
-				startActivity(new Intent(getBaseContext(),
-						AotuoSandboxActivity.class));
-				break;
+				case R.id.but_aotuo:
+					startActivity(new Intent(getBaseContext(),
+							AotuoSandboxActivity.class));
+					break;
 
-			case R.id.but_jakub:
-				startActivity(new Intent(getBaseContext(),
-						JakubSandboxActivity.class));
-				break;
+				case R.id.but_jakub:
+					startActivity(new Intent(getBaseContext(),
+							JakubSandboxActivity.class));
+					break;
 
-			case R.id.but_sebas:
-				startActivity(new Intent(getBaseContext(),
-						SebastianSandboxActivity.class));
-				break;
+				case R.id.but_sebas:
+					startActivity(new Intent(getBaseContext(),
+							SebastianSandboxActivity.class));
+					break;
 
-			case R.id.but_goggles_app:
-				startActivity(new Intent(getBaseContext(),
-						GogglesMainActivity.class));
-				break;
+				case R.id.but_goggles_app:
+					startActivity(new Intent(getBaseContext(),
+							GogglesMainActivity.class));
+					break;
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	};

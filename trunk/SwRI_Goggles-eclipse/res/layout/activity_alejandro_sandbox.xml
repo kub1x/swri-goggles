@@ -7,10 +7,33 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".AlejandroSandboxActivity" >
-
-    <TextView
+
+    <Button
+        android:id="@+id/sendMessageBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="sendMessage"
+        android:text="Send Message With Timestamp" />
+    <Button
+        android:id="@+id/getMessageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sendMessageBtn"
+        android:onClick="getMessage"
+        android:text="Get Message With Timestamp" />
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/getMessageBtn"
+        android:layout_marginTop="17dp"
+        android:text="" />
 
 </RelativeLayout>

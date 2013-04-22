@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="10" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -51,7 +52,7 @@
                 android:value="com.ttu_swri.goggles.MainActivity" />
         </activity>
         <activity
-            android:name="com.ttu_swri.goggles.GogglesMainActivity"
+            android:name=".GogglesMainActivity"
             android:label="@string/title_activity_goggles_main" >
         </activity>
     </application>
