@@ -9,7 +9,7 @@
     tools:context=".JakubSandboxActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/j_sand_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
@@ -19,7 +19,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/j_sand_text_view"
         android:orientation="vertical" >
 
     </LinearLayout>
