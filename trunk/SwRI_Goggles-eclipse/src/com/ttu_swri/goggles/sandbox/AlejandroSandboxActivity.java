@@ -13,6 +13,7 @@ import java.util.TimeZone;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class AlejandroSandboxActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_alejandro_sandbox);
 		tv = (TextView) findViewById(R.id.messageText);
+		tv.setMovementMethod(new ScrollingMovementMethod());
 	}
 
 	@Override
