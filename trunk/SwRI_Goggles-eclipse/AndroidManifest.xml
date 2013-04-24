@@ -7,10 +7,11 @@
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="10" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
     <application
         android:allowBackup="true"
@@ -55,8 +56,12 @@
                 android:value="com.ttu_swri.goggles.MainActivity" />
         </activity>
         <activity
-            android:name=".GogglesMainActivity"
+            android:name="com.ttu_swri.goggles.GogglesMainActivity"
             android:label="@string/title_activity_goggles_main" >
+        </activity>
+        <activity
+            android:name="org.ttu_swri.goggles.ui.MenuActivity"
+            android:label="@string/title_activity_menu" >
         </activity>
     </application>
 

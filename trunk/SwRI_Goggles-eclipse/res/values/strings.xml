@@ -15,5 +15,10 @@
     <string name="title_activity_sebas_sandbox">Sebastian\'s Sandbox</string>
     <string name="button_goggles_app">Final Goggles App</string>
     <string name="title_activity_goggles_main">Goggles Main</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="POI">POIs</string>
+    <string name="CurrentLocation">Current Location</string>
+    <string name="FriendsLocation">Friend\'s Location</string>
+    <string name="Messages">Messages</string>
 
 </resources>
