@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
 import com.reconinstruments.webapi.WebRequestMessage.WebMethod;
@@ -45,42 +44,92 @@ public class NetworkHandlerIronIo {
 			+ PROJECT_ID + "/queues/test_queue/messages";
 
 	/**
-	 * Implementation of following command: 
-	 *
-	 * curl -i 
-	 * -H "Content-Type: application/json"
-	 * -H "Authorization: OAuth {TOKEN}" 
-	 * -X POST -d
-	 * '{"messages":[{"body":"hello world!"}]}'
+	 * Method for posting updated or created elements Implementation of
+	 * following command:
+	 * 
+	 * curl -i -H "Content-Type: application/json" -H
+	 * "Authorization: OAuth {TOKEN}" -X POST -d '{"messages":[{"body":"hello
+	 * world!"}]}'
 	 * "http://mq-aws-us-east-1.iron.io/1/projects/{PROJECT_ID}/queues/test_queue/messages"
 	 * 
 	 * @param context
 	 * @param element
 	 * @param wrl
 	 */
-	public void post(Context context, Element element, WebResponseListener wrl) {
+	public void post(Context context, List<Element> elements) {
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
 		header.add(new BasicNameValuePair("Accept", "application/json"));
 		header.add(new BasicNameValuePair("Authorization", "OAuth " + TOKEN));
 
-		Log.d(TAG, element.toJson().toString());
-
-		JSONObject body = new JSONObject();
+		// Create message body in form:
+		// {"messages":[{"body": ELEMENT_JSON_OBJECT }]}
+		JSONObject messages = new JSONObject();
 		JSONArray arr = new JSONArray();
 		try {
-			body.put("messages", arr);
-			arr.put(element.toJson());
+			messages.put("messages", arr);
+			for (Element element : elements) {
+				JSONObject body = new JSONObject();
+				body.put("body", element.toJson());
+				arr.put(body);
+			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		// Create request
 		WebRequestBundle wrb = new WebRequestBundle(
 				"com.ttu_swri.goggles.sandbox", URL, WebMethod.POST, "1",
-				header, body);
+				header, messages);
+
+		// Create (empty) response listener
+		WebResponseListener wrl = new WebResponseListener() {
+			@Override
+			public void onComplete(byte[] arg0, String arg1, String arg2,
+					String arg3) {
+				// DO NOTHING
+			}
+
+			@Override
+			public void onComplete(String arg0, String arg1, String arg2,
+					String arg3) {
+				// DO NOTHING
+				// TODO might do repsonse check here
+			}
+		};
+
+		// Execute Web request with listener
+		this.nh.send(context, wrb, wrl);
+	}
+
+	/**
+	 * Method for getting elements from queue Implementation of following
+	 * command:
+	 * 
+	 * curl -i -H "Content-Type: application/json" -H
+	 * "Authorization: OAuth {TOKEN}"
+	 * "http://mq-aws-us-east-1.iron.io/1/projects/{PROJECT_ID}/queues/test_queue/messages"
+	 * 
+	 * TODO WebResponseListener MUST handle JSON form of Element and work with
+	 * it that way!!!
+	 * 
+	 * @param context
+	 * @param element
+	 * @param wrl
+	 */
+	public void get(Context context, WebResponseListener wrl) {
+		// Setting HTTP Headers
+		List<NameValuePair> header = new ArrayList<NameValuePair>();
+		header.add(new BasicNameValuePair("Accept", "application/json"));
+		header.add(new BasicNameValuePair("Authorization", "OAuth " + TOKEN));
+
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		WebRequestBundle wrb = new WebRequestBundle(
+				"com.ttu_swri.goggles.sandbox", URL, WebMethod.GET, "0",
+				header, params);
 
 		this.nh.send(context, wrb, wrl);
 	}
-	
+
 }

@@ -31,13 +31,24 @@ public class ElementMessage extends Element {
 
 	public ElementMessage(String id, String topic, String text,
 			boolean isAlert, Date expires) {
-		this(id, ElementType.T_MESSAGE, new Date(System.currentTimeMillis()),
+		this(id, new Date(System.currentTimeMillis()),
 				topic, text, isAlert, expires);
 	}
 
-	private ElementMessage(String id, ElementType type, Date lastEdit,
+	/** Complete constructor
+	 * 
+	 * To be used here and by parser only!
+	 * 
+	 * @param id
+	 * @param lastUpdate
+	 * @param topic
+	 * @param text
+	 * @param isAlert
+	 * @param expires
+	 */
+	protected ElementMessage(String id, Date lastUpdate,
 			String topic, String text, boolean isAlert, Date expires) {
-		super(id, type, lastEdit);
+		super(id, ElementType.T_MESSAGE, lastUpdate);
 		this.topic = topic;
 		this.text = text;
 		this.isAlert = isAlert;

@@ -9,17 +9,30 @@ import org.json.JSONObject;
 public class Element implements IElementlike {
 
 	public enum ElementType {
-		T_MY_POS("position"), T_MATE("userInfo"), T_POI("poi"), T_MESSAGE(
-				"message");
+		// T_MY_POS("position"),
+		T_MATE("userInfo"), T_POI("poi"), T_MESSAGE("message");
 
-		private final String json;
+		private final String jsonName;
 
-		private ElementType(String json) {
-			this.json = json;
+		private ElementType(String jsonName) {
+			this.jsonName = jsonName;
 		}
 
 		public String toJson() {
-			return this.json;
+			return this.jsonName;
+		}
+
+		public static ElementType parseJson(String jsonName) throws JSONException {
+			// if(jsonName == "position")
+			// return T_MY_POS;
+			if (jsonName == "userInfo")
+				return T_MATE;
+			if (jsonName == "poi")
+				return T_POI;
+			if (jsonName == "message")
+				return T_MESSAGE;
+
+			throw new JSONException("Invalid ElementType name");
 		}
 	}
 

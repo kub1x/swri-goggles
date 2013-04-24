@@ -32,11 +32,21 @@ public class ElementMate extends Element {
 
 	public ElementMate(String id, String name, String description,
 			Location location) {
-		this(id, ElementType.T_MATE, new Date(System.currentTimeMillis()),
+		this(id, new Date(System.currentTimeMillis()),
 				name, description, location);
 	}
 
-	private ElementMate(String id, ElementType type, Date lastEdit,
+	/** Complete constructor
+	 * 
+	 * To be used here and by parser only!
+	 * 
+	 * @param id
+	 * @param lastUpdate
+	 * @param name
+	 * @param description
+	 * @param location
+	 */
+	protected ElementMate(String id, Date lastUpdate,
 			String name, String description, Location location) {
 		super(name, ElementType.T_MATE, new Date(System.currentTimeMillis()));
 		this.name = name;

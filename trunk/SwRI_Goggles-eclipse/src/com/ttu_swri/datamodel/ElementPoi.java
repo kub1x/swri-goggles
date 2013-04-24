@@ -34,19 +34,31 @@ public class ElementPoi extends Element {
 
 	public ElementPoi(String id, String name, String description,
 			Location location, int checkpointNumber, Date expires) {
-		this(id, ElementType.T_POI, new Date(System.currentTimeMillis()), name,
+		this(id, new Date(System.currentTimeMillis()), name,
 				description, location, -1, null);
 	}
 
 	/**
-	 * Never mar this as public. Previous constructors let you do all you need.
-	 * ElementType will be always POI. LastEdit will be always current time on
-	 * time of creation (can be changed by setter if otherwise).
+	 * Complete constructor
+	 * 
+	 * To be used here and by Parser only!
+	 * 
+	 * Never mark this constructor as public. Previous constructors let you do
+	 * all you need. ElementType will be always POI here. LastEdit will be always
+	 * current time on time of creation (can be changed by setter if otherwise).
+	 * 
+	 * @param id
+	 * @param lastUpdate
+	 * @param name
+	 * @param description
+	 * @param location
+	 * @param checkpointNumber
+	 * @param expires
 	 */
-	private ElementPoi(String id, ElementType type, Date lastEdit, String name,
-			String description, Location location, int checkpointNumber,
-			Date expires) {
-		super(id, type, lastEdit);
+	protected ElementPoi(String id, Date lastUpdate,
+			String name, String description, Location location,
+			int checkpointNumber, Date expires) {
+		super(id, ElementType.T_POI, lastUpdate);
 
 		this.name = name;
 		this.description = description;
