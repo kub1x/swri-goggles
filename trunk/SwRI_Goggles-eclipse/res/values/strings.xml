@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Goggles</string>
-    <string name="hello_world">Hello Goggles world!</string>
+    <string name="hello_world">Hello Goggles &amp; Github world :D!</string>
     <string name="menu_settings">Settings</string>
     <string name="button_sandbox_aleja">Alex\'s Sandbox</string>
     <string name="button_sandbox_aotuo">Aotuo\'s Sandbox</string>
