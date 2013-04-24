@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.ttu_swri.goggles;
 
 import java.util.Collection;
@@ -10,30 +7,42 @@ import com.ttu_swri.datamodel.Element;
 
 import android.location.Location;
 
-/**
- * @author kub1x
- * 
- */
+/** @author kub1x */
 public class DataManager {
 
-	// TODO MAKE THIS CLASS SINGLETON!!!!
-
 	private HashMap<String, Element> elements = null;
-	private Location my_location = null;
+	private Location myLocation = null;
 
-	public DataManager() {
+	// Constructor ============================================================
+
+	private DataManager() {
 		this.elements = new HashMap<String, Element>();
 	}
 
-	public Location getMyLocation() {
-		// TODO probably will be more sophisticated
-		return this.my_location;
+	// Singleton design pattern ===============================================
+
+	private static DataManager dminst = null;
+
+	public static DataManager getInstance() {
+		if (DataManager.dminst == null) {
+			DataManager.dminst = new DataManager();
+		}
+		return DataManager.dminst;
 	}
 
-	public void updateMyLocation(Location new_location) {
-		// TODO probably some check needed..
-		this.my_location = new_location;
+	// Getters/Setters ========================================================
+	
+	public Location getMyLocation() {
+		// TODO probably will be more sophisticated
+		return this.myLocation;
 	}
+
+	public void setMyLocation(Location location) {
+		// TODO probably some check needed..
+		this.myLocation = location;
+	}
+	
+	// ========================================================================
 
 	public Collection<Element> getElements() {
 		// TODO create something we can iterate on for Visualization to iterate
@@ -44,7 +53,7 @@ public class DataManager {
 	}
 
 	public void update(Element element) {
-		if (!this.elements.containsKey(element.Id)) {
+		if (!this.elements.containsKey(element.getId())) {
 			add_element(element);
 		} else {
 			update_element(element);
@@ -53,7 +62,7 @@ public class DataManager {
 
 	private void add_element(Element element) {
 		// TODO check if element didn't overceed it's expiration time
-		this.elements.put(element.Id, element);
+		this.elements.put(element.getId(), element);
 	}
 
 	private void update_element(Element element) {
@@ -63,15 +72,15 @@ public class DataManager {
 		// TODO recognize type of element, it's last edited time compare it to
 		// already stored element and update data if necessary
 
-		Element orig = (Element) this.elements.get(element.Id);
+		Element orig = (Element) this.elements.get(element.getId());
 
-		if (orig.LastUpdate.after(element.LastUpdate)) {
+		if (orig.isNewerThan(element)) {
 			// We already have newest version
-			// TODO do something! at least return false
+			// TODO at least return false
 			return;
 		} else {
-			this.elements.remove(element.Id);
-			this.elements.put(element.Id, element);
+			this.elements.remove(element.getId());
+			this.elements.put(element.getId(), element);
 		}
 	}
 

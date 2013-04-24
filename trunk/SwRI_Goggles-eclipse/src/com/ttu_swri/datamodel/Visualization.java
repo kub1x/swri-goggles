@@ -1,14 +1,8 @@
-/**
- * 
- */
 package com.ttu_swri.datamodel;
 
 import android.util.Log;
 
-/**
- * @author kub1x
- * 
- */
+/** @author kub1x */
 public abstract class Visualization implements IVisitable {
 
 	// TODO REFACTORING: move this class to visualization package once it's
@@ -22,7 +16,7 @@ public abstract class Visualization implements IVisitable {
 		try {
 			element = (Element) elementlike;
 
-			switch (element.Type) {
+			switch (element.type) {
 			case T_MATE:
 				this.draw((ElementMate) element);
 				break;

@@ -1,39 +1,72 @@
-/**
- * 
- */
 package com.ttu_swri.datamodel;
 
 import java.util.Date;
 import android.location.Location;
 
-/**
- * @author kub1x
- * 
- */
+/** @author kub1x */
 public class ElementMate extends Element {
 
 	// String user_id = null; // Is in Element.Id
-	String name = null;
-	String description = null;
-	Location location = null;
+	private String name = null;
+	private String description = null;
+	private Location location = null;
 
-	/**
-	 * 
-	 */
+	// Constructors ===========================================================
+
 	public ElementMate() {
 		this("<no id>", "<no description>");
 	}
-	
-	public ElementMate(String name, String description){
+
+	public ElementMate(String name, String description) {
 		this(name, description, null);
 	}
 
 	public ElementMate(String name, String description, Location location) {
 		// TODO change name in following line to some ID
+		this("Mate:" + name.replace(' ', '_'), name, description, location);
+	}
+
+	public ElementMate(String id, String name, String description,
+			Location location) {
+		this(id, ElementType.T_MATE, new Date(System.currentTimeMillis()),
+				name, description, location);
+	}
+
+	private ElementMate(String id, ElementType type, Date lastEdit,
+			String name, String description, Location location) {
 		super(name, ElementType.T_MATE, new Date(System.currentTimeMillis()));
 		this.name = name;
 		this.description = description;
 		this.location = location;
+	}
+
+	// Getters/Setters ========================================================
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		this.justEdited();
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+		this.justEdited();
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+		this.justEdited();
 	}
 
 }

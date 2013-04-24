@@ -1,41 +1,66 @@
-/**
- * 
- */
 package com.ttu_swri.datamodel;
 
 import java.util.Date;
 
-/**
- * @author kub1x
- * 
- */
+/** @author kub1x */
 public class Element implements IElementlike {
 
 	public enum ElementType {
 		T_MY_POS, T_MATE, T_POI, T_MESSAGE,
 	}
 
-	public String Id = null;
-	public ElementType Type = null;
-	public Date LastUpdate = null;
+	protected final String id;
+	protected final ElementType type;
+	private Date lastUpdate;
 
-	//XXX Type is essential. Do not allow implicit constructor
-	//public Element() {
-	//}
+	// XXX Type is essential. Do not allow implicit constructor
+	// public Element() {
+	// }
 
-	public Element(ElementType type) {
-		this.Type = type;
-	}
+	// XXX Probably not to be used
+	// public Element(ElementType type) {
+	// this("<no id>", type, null);
+	// }
 
 	public Element(String id, ElementType type, Date lastUpdate) {
-		this.Id = id;
-		this.Type = type;
-		this.LastUpdate = lastUpdate;
+		this.id = id;
+		this.type = type;
+		this.lastUpdate = lastUpdate;
 	}
+
+	// Visitor Design Pattern =================================================
 
 	@Override
 	public void accept(IVisitable visitor) {
 		visitor.visit(this);
+	}
+
+	// Getters/Setters ========================================================
+
+	public String getId() {
+		return id;
+	}
+
+	public ElementType getType() {
+		return type;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	// ========================================================================
+
+	protected void justEdited() {
+		this.lastUpdate = new Date(System.currentTimeMillis());
+	}
+
+	public boolean isNewerThan(Element element) {
+		return this.lastUpdate.after(element.lastUpdate);
 	}
 
 }
