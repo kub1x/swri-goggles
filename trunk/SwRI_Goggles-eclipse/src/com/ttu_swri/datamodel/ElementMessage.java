@@ -2,6 +2,9 @@ package com.ttu_swri.datamodel;
 
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /** @author kub1x */
 public class ElementMessage extends Element {
 
@@ -77,6 +80,24 @@ public class ElementMessage extends Element {
 	public void setExpires(Date expires) {
 		this.expires = expires;
 		this.justEdited();
+	}
+
+	// ========================================================================
+
+	@Override
+	public JSONObject toJson() {
+		// TODO handle NULL values
+		JSONObject o = super.toJson();
+		try {
+			o.put("topic", this.topic);
+			o.put("text", this.text);
+			o.put("isAlert", this.isAlert);
+			o.put("expires", this.expires.toGMTString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
 	}
 
 }

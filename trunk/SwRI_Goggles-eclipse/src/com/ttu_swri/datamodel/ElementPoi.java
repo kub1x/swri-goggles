@@ -1,6 +1,10 @@
 package com.ttu_swri.datamodel;
 
 import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.location.Location;
 
 /** @author kub1x */
@@ -96,6 +100,27 @@ public class ElementPoi extends Element {
 	public void setExpires(Date expires) {
 		this.expires = expires;
 		this.justEdited();
+	}
+
+	// ========================================================================
+
+	@Override
+	public JSONObject toJson() {
+		// TODO handle NULL values
+		JSONObject o = super.toJson();
+		try {
+			o.put("name", this.name);
+			o.put("description", this.description);
+			o.put("location",
+					this.location.getLatitude() + ","
+							+ this.location.getLongitude());
+			o.put("checkpointNumber", this.checkpointNumber);
+			o.put("expires", this.expires.toGMTString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
 	}
 
 }

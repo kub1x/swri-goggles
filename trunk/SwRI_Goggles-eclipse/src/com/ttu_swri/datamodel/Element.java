@@ -2,11 +2,25 @@ package com.ttu_swri.datamodel;
 
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /** @author kub1x */
 public class Element implements IElementlike {
 
 	public enum ElementType {
-		T_MY_POS, T_MATE, T_POI, T_MESSAGE,
+		T_MY_POS("position"), T_MATE("userInfo"), T_POI("poi"), T_MESSAGE(
+				"message");
+
+		private final String json;
+
+		private ElementType(String json) {
+			this.json = json;
+		}
+
+		public String toJson() {
+			return this.json;
+		}
 	}
 
 	protected final String id;
@@ -63,4 +77,16 @@ public class Element implements IElementlike {
 		return this.lastUpdate.after(element.lastUpdate);
 	}
 
+	public JSONObject toJson() {
+		JSONObject o = new JSONObject();
+		try {
+			o.put("id", this.id);
+			o.put("type", this.type.toJson());
+			o.put("lastUpdate", this.lastUpdate.toGMTString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
+	}
 }

@@ -9,8 +9,8 @@ import com.ttu_swri.datamodel.ElementMate;
 import com.ttu_swri.datamodel.ElementMessage;
 import com.ttu_swri.datamodel.ElementPoi;
 import com.ttu_swri.goggles.DataManager;
-import com.ttu_swri.goggles.NetworkHandler;
 import com.ttu_swri.goggles.R;
+import com.ttu_swri.goggles.network.NetworkHandler;
 
 import android.location.Criteria;
 import android.location.Location;
@@ -62,7 +62,7 @@ public class JakubSandboxActivity extends Activity {
 		String url = "https://api.forecast.io/forecast/" + DARK_SKY_API_KEY
 				+ "/" + lat + "," + lon;
 
-		NetworkHandler.getJson(getBaseContext(), url,
+		NetworkHandler.getInstance().getJson(getBaseContext(), url,
 				new WebResponseListener() {
 
 					@Override
