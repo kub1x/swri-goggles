@@ -43,7 +43,7 @@ public class Parser {
 		return elements;
 	}
 
-	private static Element parseElement(JSONObject jsonElement)
+	public static Element parseElement(JSONObject jsonElement)
 			throws JSONException {
 		Element ret;
 		// Get type of element...
@@ -73,7 +73,10 @@ public class Parser {
 		String topic = jsonElement.getString("topic");
 		String text = jsonElement.getString("text");
 		boolean isAlert = jsonElement.getBoolean("isAlert");
-		Date expires = new Date(jsonElement.getString("expires"));
+		String sExpires = jsonElement.getString("expires");
+		Date expires = null;
+		if (sExpires != "")
+			expires = new Date(sExpires);
 		return new ElementMessage(id, lastUpdate, topic, text, isAlert, expires);
 	}
 
@@ -93,7 +96,12 @@ public class Parser {
 		location.setLongitude(longitude);
 
 		int checkpointNumber = jsonElement.getInt("checkpointNumber");
-		Date expires = new Date(jsonElement.getString("expires"));
+		
+		String sExpires = jsonElement.getString("expires");
+		Date expires = null;
+		if (sExpires != "")
+			expires = new Date(sExpires);
+		
 		return new ElementPoi(id, lastUpdate, name, description, location,
 				checkpointNumber, expires);
 	}

@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
 import com.reconinstruments.webapi.WebRequestMessage.WebMethod;
@@ -53,16 +54,18 @@ public class NetworkHandlerIronIo {
 	 * curl -i -H "Content-Type: application/json" -H
 	 * "Authorization: OAuth {TOKEN}" -X POST -d '{"messages":[{"body":"hello
 	 * world!"}]}'
-	 * "http://mq-aws-us-east-1.iron.io/1/projects/{PROJECT_ID}/queues/test_queue/messages"
+	 * "https://mq-aws-us-east-1.iron.io:443/1/projects/{PROJECT_ID}/queues/test_queue/messages"
 	 * 
 	 * @param context
 	 * @param element
 	 * @param wrl
 	 */
 	public void post(Context context, List<Element> elements) {
+		Log.d(TAG, "Sending " + elements.size() + "elements through post");
+
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
-		header.add(new BasicNameValuePair("Accept", "application/json"));
+		header.add(new BasicNameValuePair("Content-Type", "application/json"));
 		header.add(new BasicNameValuePair("Authorization", "OAuth " + TOKEN));
 
 		// Create message body in form:
@@ -80,10 +83,12 @@ public class NetworkHandlerIronIo {
 			e.printStackTrace();
 		}
 
+		Log.d(TAG, "posting: \n" + messages.toString());
+
 		// Create request
 		WebRequestBundle wrb = new WebRequestBundle(
 				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_OUT_NAME
-						+ "/messages", WebMethod.POST, "1", header, messages);
+						+ "/messages", WebMethod.POST, "2", header, messages);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -97,7 +102,7 @@ public class NetworkHandlerIronIo {
 			public void onComplete(String arg0, String arg1, String arg2,
 					String arg3) {
 				// DO NOTHING
-				// TODO might do repsonse check here
+				Log.d(TAG, "Response to post: \n" + arg0);
 			}
 		};
 
@@ -121,6 +126,8 @@ public class NetworkHandlerIronIo {
 	 * @param wrl
 	 */
 	public void get(Context context, WebResponseListener wrl) {
+		Log.d(TAG, "Sending get request");
+
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
 		header.add(new BasicNameValuePair("Accept", "application/json"));
@@ -147,7 +154,7 @@ public class NetworkHandlerIronIo {
 				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
 						+ "/messages/" + msgId, WebMethod.DELETE, "0", header,
 				params);
-		
+
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
 			@Override
@@ -160,7 +167,7 @@ public class NetworkHandlerIronIo {
 			public void onComplete(String arg0, String arg1, String arg2,
 					String arg3) {
 				// DO NOTHING
-				// TODO might do repsonse check here
+				Log.d(TAG, "Response to Delete: \n" + arg0);
 			}
 		};
 

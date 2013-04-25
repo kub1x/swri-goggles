@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.datamodel.ElementMate;
 import com.ttu_swri.datamodel.Parser;
@@ -95,10 +98,9 @@ public class DataManager {
 		}
 	}
 
-	public void updateFromNetwork(String response) {
-		List<Element> elements = Parser.parse(response);
-		for (Element element : elements) {
-			update_element(element);
+	public void updateFromNetwork(List<JSONObject> elements) throws JSONException {
+		for (JSONObject element : elements) {
+			update_element(Parser.parseElement(element));
 		}
 	}
 
@@ -107,7 +109,7 @@ public class DataManager {
 		List<Element> elements = new ArrayList<Element>(this.toSync);
 		this.toSync.clear(); // TODO clear only when successfully sent..?
 		// Add info about current user
-		elements.add(this.myUserInfo);
+		//elements.add(this.myUserInfo); //TODO XXX UNCOMMENT !!! when the rest is tested
 		// Send
 		return elements;
 	}

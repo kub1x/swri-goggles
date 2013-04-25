@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
+import android.location.LocationManager;
 
 /** @author kub1x */
 public class ElementMate extends Element {
@@ -22,7 +23,7 @@ public class ElementMate extends Element {
 	}
 
 	public ElementMate(String name, String description) {
-		this(name, description, null);
+		this(name, description, new Location(LocationManager.PASSIVE_PROVIDER));
 	}
 
 	public ElementMate(String name, String description, Location location) {
@@ -32,11 +33,12 @@ public class ElementMate extends Element {
 
 	public ElementMate(String id, String name, String description,
 			Location location) {
-		this(id, new Date(System.currentTimeMillis()),
-				name, description, location);
+		this(id, new Date(System.currentTimeMillis()), name, description,
+				location);
 	}
 
-	/** Complete constructor
+	/**
+	 * Complete constructor
 	 * 
 	 * To be used here and by parser only!
 	 * 
@@ -46,9 +48,9 @@ public class ElementMate extends Element {
 	 * @param description
 	 * @param location
 	 */
-	protected ElementMate(String id, Date lastUpdate,
-			String name, String description, Location location) {
-		super(name, ElementType.T_MATE, new Date(System.currentTimeMillis()));
+	protected ElementMate(String id, Date lastUpdate, String name,
+			String description, Location location) {
+		super(id, ElementType.T_MATE, new Date(System.currentTimeMillis()));
 		this.name = name;
 		this.description = description;
 		this.location = location;
@@ -79,7 +81,10 @@ public class ElementMate extends Element {
 	}
 
 	public void setLocation(Location location) {
-		this.location = location;
+		if (location == null)
+			this.location = new Location(LocationManager.PASSIVE_PROVIDER);
+		else
+			this.location = location;
 		this.justEdited();
 	}
 
@@ -92,9 +97,11 @@ public class ElementMate extends Element {
 		try {
 			o.put("name", this.name);
 			o.put("description", this.description);
-			o.put("location",
-					this.location.getLatitude() + ","
-							+ this.location.getLongitude());
+			if (this.location == null)
+				o.put("location", "0,0");
+			else
+				o.put("location", this.location.getLatitude() + ","
+						+ this.location.getLongitude());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

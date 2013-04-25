@@ -16,26 +16,46 @@
         android:scrollbars="vertical"
         tools:context=".JakubSandboxActivity" >
 
-        <TextView
-            android:id="@+id/j_sand_text_view_weather"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_world" />
-
-        <TextView
-            android:id="@+id/j_sand_text_view_pos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/j_sand_text_view_weather"
-            android:text="@string/hello_world" />
-
         <LinearLayout
-            android:id="@+id/j_sand_lin_lay"
+            android:id="@+id/j_sand_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/j_sand_text_view_pos"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/j_button_sync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sync" />
+
+            <Button
+                android:id="@+id/j_button_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show" />
+
+            <Button
+                android:id="@+id/j_button_create"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/j_sand_datalist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/j_sand_buttons"
             android:orientation="vertical" >
         </LinearLayout>
     </RelativeLayout>
-</ScrollView>
+
+</ScrollView>

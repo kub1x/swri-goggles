@@ -31,11 +31,12 @@ public class ElementMessage extends Element {
 
 	public ElementMessage(String id, String topic, String text,
 			boolean isAlert, Date expires) {
-		this(id, new Date(System.currentTimeMillis()),
-				topic, text, isAlert, expires);
+		this(id, new Date(System.currentTimeMillis()), topic, text, isAlert,
+				expires);
 	}
 
-	/** Complete constructor
+	/**
+	 * Complete constructor
 	 * 
 	 * To be used here and by parser only!
 	 * 
@@ -46,8 +47,8 @@ public class ElementMessage extends Element {
 	 * @param isAlert
 	 * @param expires
 	 */
-	protected ElementMessage(String id, Date lastUpdate,
-			String topic, String text, boolean isAlert, Date expires) {
+	protected ElementMessage(String id, Date lastUpdate, String topic,
+			String text, boolean isAlert, Date expires) {
 		super(id, ElementType.T_MESSAGE, lastUpdate);
 		this.topic = topic;
 		this.text = text;
@@ -103,7 +104,10 @@ public class ElementMessage extends Element {
 			o.put("topic", this.topic);
 			o.put("text", this.text);
 			o.put("isAlert", this.isAlert);
-			o.put("expires", this.expires.toGMTString());
+			if (this.expires == null)
+				o.put("expires", "");
+			else
+				o.put("expires", this.expires.toGMTString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

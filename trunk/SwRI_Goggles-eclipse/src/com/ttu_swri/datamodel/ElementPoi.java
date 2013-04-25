@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
+import android.location.LocationManager;
 
 /** @author kub1x */
 public class ElementPoi extends Element {
@@ -20,7 +21,8 @@ public class ElementPoi extends Element {
 	// Constructors ===========================================================
 
 	public ElementPoi() {
-		this("<no id>", "<no description>", null);
+		this("<no id>", "<no description>", new Location(
+				LocationManager.PASSIVE_PROVIDER));
 	}
 
 	public ElementPoi(String name, String description, Location location) {
@@ -34,8 +36,8 @@ public class ElementPoi extends Element {
 
 	public ElementPoi(String id, String name, String description,
 			Location location, int checkpointNumber, Date expires) {
-		this(id, new Date(System.currentTimeMillis()), name,
-				description, location, -1, null);
+		this(id, new Date(System.currentTimeMillis()), name, description,
+				location, -1, null);
 	}
 
 	/**
@@ -44,8 +46,9 @@ public class ElementPoi extends Element {
 	 * To be used here and by Parser only!
 	 * 
 	 * Never mark this constructor as public. Previous constructors let you do
-	 * all you need. ElementType will be always POI here. LastEdit will be always
-	 * current time on time of creation (can be changed by setter if otherwise).
+	 * all you need. ElementType will be always POI here. LastEdit will be
+	 * always current time on time of creation (can be changed by setter if
+	 * otherwise).
 	 * 
 	 * @param id
 	 * @param lastUpdate
@@ -55,9 +58,9 @@ public class ElementPoi extends Element {
 	 * @param checkpointNumber
 	 * @param expires
 	 */
-	protected ElementPoi(String id, Date lastUpdate,
-			String name, String description, Location location,
-			int checkpointNumber, Date expires) {
+	protected ElementPoi(String id, Date lastUpdate, String name,
+			String description, Location location, int checkpointNumber,
+			Date expires) {
 		super(id, ElementType.T_POI, lastUpdate);
 
 		this.name = name;
@@ -92,7 +95,10 @@ public class ElementPoi extends Element {
 	}
 
 	public void setLocation(Location position) {
-		this.location = position;
+		if (location == null)
+			this.location = new Location(LocationManager.PASSIVE_PROVIDER);
+		else
+			this.location = position;
 		this.justEdited();
 	}
 
@@ -123,11 +129,16 @@ public class ElementPoi extends Element {
 		try {
 			o.put("name", this.name);
 			o.put("description", this.description);
-			o.put("location",
-					this.location.getLatitude() + ","
-							+ this.location.getLongitude());
+			if (this.location == null)
+				o.put("location", "0,0");
+			else
+				o.put("location", this.location.getLatitude() + ","
+						+ this.location.getLongitude());
 			o.put("checkpointNumber", this.checkpointNumber);
-			o.put("expires", this.expires.toGMTString());
+			if (this.expires == null)
+				o.put("expires", "");
+			else
+				o.put("expires", this.expires.toGMTString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
