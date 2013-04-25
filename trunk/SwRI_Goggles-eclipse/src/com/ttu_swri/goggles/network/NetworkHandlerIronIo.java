@@ -40,8 +40,11 @@ public class NetworkHandlerIronIo {
 
 	private static String PROJECT_ID = "51661401ed3d7657b60014bc";
 	private static String TOKEN = "zvS2csbud0tr6zgNbmjo9mSPByU";
+	private static String QUEUE_IN_NAME = "goggles";
+	private static String QUEUE_OUT_NAME = "test_user";
+
 	private static String URL = "https://mq-aws-us-east-1.iron.io:443/1/projects/"
-			+ PROJECT_ID + "/queues/test_queue/messages";
+			+ PROJECT_ID + "/queues/"; // + QUEUE_NAME + "/messages";
 
 	/**
 	 * Method for posting updated or created elements Implementation of
@@ -79,8 +82,8 @@ public class NetworkHandlerIronIo {
 
 		// Create request
 		WebRequestBundle wrb = new WebRequestBundle(
-				"com.ttu_swri.goggles.sandbox", URL, WebMethod.POST, "1",
-				header, messages);
+				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_OUT_NAME
+						+ "/messages", WebMethod.POST, "1", header, messages);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -126,8 +129,40 @@ public class NetworkHandlerIronIo {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 		WebRequestBundle wrb = new WebRequestBundle(
-				"com.ttu_swri.goggles.sandbox", URL, WebMethod.GET, "0",
-				header, params);
+				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
+						+ "/messages", WebMethod.GET, "0", header, params);
+
+		this.nh.send(context, wrb, wrl);
+	}
+
+	public void delete(Context context, String msgId) {
+		// Setting HTTP Headers
+		List<NameValuePair> header = new ArrayList<NameValuePair>();
+		header.add(new BasicNameValuePair("Accept", "application/json"));
+		header.add(new BasicNameValuePair("Authorization", "OAuth " + TOKEN));
+
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		WebRequestBundle wrb = new WebRequestBundle(
+				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
+						+ "/messages/" + msgId, WebMethod.DELETE, "0", header,
+				params);
+		
+		// Create (empty) response listener
+		WebResponseListener wrl = new WebResponseListener() {
+			@Override
+			public void onComplete(byte[] arg0, String arg1, String arg2,
+					String arg3) {
+				// DO NOTHING
+			}
+
+			@Override
+			public void onComplete(String arg0, String arg1, String arg2,
+					String arg3) {
+				// DO NOTHING
+				// TODO might do repsonse check here
+			}
+		};
 
 		this.nh.send(context, wrb, wrl);
 	}
