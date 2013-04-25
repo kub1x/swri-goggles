@@ -8,7 +8,6 @@ import io.iron.ironmq.Queue;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -20,7 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.ttu_swri.datamodel.ElementPoi;
 import com.ttu_swri.goggles.R;
+import com.ttu_swri.goggles.persistence.impl.SqliteDAO;
 
 import edu.ttu.swri.data.model.GogglesMessage;
 import edu.ttu.swri.data.model.impl.IronIOMessageImpl;
@@ -49,6 +50,21 @@ public class AlejandroSandboxActivity extends Activity {
 	public void getMessage(View v){
 		 // here we get message by invoking an inner class that allows
 		 // running the request on a different thread, so the UI doesn't freeze
+		
+		ElementPoi poi = new ElementPoi();
+		poi.setCheckpointNumber(98745);
+		poi.setDescription("Study Area");
+		poi.setName("Library");
+		
+		try{
+		SqliteDAO dao = new SqliteDAO(getBaseContext());
+		dao.saveElementPoi(poi);
+		} catch (Throwable t){
+			
+			System.out.println(t.getMessage());
+			t.printStackTrace();
+			
+		}
 		Toast.makeText(getBaseContext(), "Getting messages from Q", Toast.LENGTH_SHORT).show();
 		new GetMessagesAsync().execute(v);
 	}	
@@ -110,11 +126,8 @@ public class AlejandroSandboxActivity extends Activity {
 	    	
     		Calendar cal = Calendar.getInstance();
     		cal.setTimeInMillis(gm.getSentDate());
-    		SimpleDateFormat sdf = new SimpleDateFormat();
-    		sdf.setCalendar(cal);
-    		sdf.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
     		
-    		sb.append(newLine + "Formatted Date: " + sdf.format(cal.getTime()));
+    		sb.append(newLine + "Formatted Date: " + SimpleDateFormat.getDateTimeInstance().format(cal.getTime()));
     		
     		tv.append(sb.toString());
     		System.out.println(sb.toString());
@@ -159,10 +172,10 @@ public class AlejandroSandboxActivity extends Activity {
 	        	// plus the msgTag to identify it's a text message, in this case it's "-im"
 	    		Client client = new Client(projectId, token, Cloud.ironAWSUSEast);
 	    		Queue queue = client.queue(aurl[1]);
-	    		Calendar cal = Calendar.getInstance();
-	    		SimpleDateFormat sdf = new SimpleDateFormat();
-	    		sdf.setCalendar(cal);
-	    		sdf.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
+//	    		Calendar cal = Calendar.getInstance();
+//	    		SimpleDateFormat sdf = new SimpleDateFormat();
+//	    		sdf.setCalendar(cal);
+//	    		sdf.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
 	    		queue.push(aurl[0]);
 	           
 	            } catch (Exception e) {

@@ -16,9 +16,15 @@
     <string name="button_goggles_app">Final Goggles App</string>
     <string name="title_activity_goggles_main">Goggles Main</string>
     <string name="title_activity_menu">MenuActivity</string>
-    <string name="POI">POIs</string>
+    <string name="POI">Points of Interest</string>
     <string name="CurrentLocation">Current Location</string>
     <string name="FriendsLocation">Friend\'s Location</string>
     <string name="Messages">Messages</string>
+    <string name="title_activity_poi">POIActivity</string>
+    <string name="title_activity_current_location">CurrentLocationActivity</string>
+    <string name="title_activity_friends_location">FriendsLocationActivity</string>
+    <string name="title_activity_messages">MessagesActivity</string>
+    <string name="POIs">Points of Interest</string>
+    <string name="RTMM">Return to Main Menu</string>
 
 </resources>
