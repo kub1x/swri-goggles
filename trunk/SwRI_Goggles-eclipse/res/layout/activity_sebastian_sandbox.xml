@@ -6,11 +6,51 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".SebastianSandboxActivity" >
+    tools:context=".MenuActivity" >
 
-    <TextView
+    <Button
+        android:id="@+id/POI"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="29dp"
+        android:padding="10dp"
+        android:text="@string/POI"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/Messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/POI"
+        android:layout_marginLeft="30dp"
+        android:padding="10dp"
+        android:text="@string/Messages"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/FriendsLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/Messages"
+        android:layout_marginLeft="30dp"
+        android:padding="10dp"
+        android:text="@string/FriendsLocation"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/CurrentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/FriendsLocation"
+        android:layout_marginLeft="30dp"
+        android:padding="10dp"
+        android:text="@string/CurrentLocation"
+        android:textStyle="bold" />
 
 </RelativeLayout>
