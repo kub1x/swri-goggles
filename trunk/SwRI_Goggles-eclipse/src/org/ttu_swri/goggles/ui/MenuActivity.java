@@ -6,7 +6,9 @@ import com.ttu_swri.goggles.R;
 
 import android.os.Bundle;
 import android.app.Activity;
+//import android.content.Intent;
 import android.view.Menu;
+//import android.view.View;
 
 public class MenuActivity extends Activity {
 
@@ -15,6 +17,8 @@ public class MenuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_menu);
 	}
+	
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

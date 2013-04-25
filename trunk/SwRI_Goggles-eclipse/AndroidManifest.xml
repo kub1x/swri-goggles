@@ -72,7 +72,7 @@
             android:label="@string/title_activity_current_location" >
         </activity>
         <activity
-            android:name="org.ttu_swri.goggles.ui.FriendsLocation"
+            android:name="org.ttu_swri.goggles.ui.FriendsLocationActivity"
             android:label="@string/title_activity_friends_location" >
         </activity>
         <activity
