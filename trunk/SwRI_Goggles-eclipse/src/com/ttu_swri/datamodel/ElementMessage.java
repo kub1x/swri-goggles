@@ -9,8 +9,8 @@ import org.json.JSONObject;
 public class ElementMessage extends Element {
 
 	// String msg_id = null; // Is in Element.Id
-	private String topic = null;
-	private String text = null;
+	private String topic = "";
+	private String text = "";
 	private boolean isAlert = false;
 	private Date expires = null;
 

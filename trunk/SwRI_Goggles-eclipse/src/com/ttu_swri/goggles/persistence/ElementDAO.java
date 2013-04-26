@@ -20,15 +20,15 @@ public interface ElementDAO {
 //		
 //	}
 	
-	public void saveElementPoi(ElementPoi elementPoi);
+	public String saveElementPoi(ElementPoi elementPoi);
 	
 	public void saveElementPois(Collection<ElementPoi> elementPoiCollection);
 	
-	public void saveElementMessage(ElementMessage elementMessage);
+	public String saveElementMessage(ElementMessage elementMessage);
 	
 	public void saveElementMessages(Collection<ElementMessage> elementMessage);
 
-	public void saveElementMate(ElementMate elementMate);
+	public String saveElementMate(ElementMate elementMate);
 	
 	public void saveElementMates(Collection<ElementMate> elementMate);
 	

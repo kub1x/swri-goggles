@@ -8,6 +8,7 @@ import io.iron.ironmq.Queue;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -51,22 +52,38 @@ public class AlejandroSandboxActivity extends Activity {
 		 // here we get message by invoking an inner class that allows
 		 // running the request on a different thread, so the UI doesn't freeze
 		
-		ElementPoi poi = new ElementPoi();
-		poi.setCheckpointNumber(98745);
+		ElementPoi poi = new ElementPoi();//("145876", "Library", "Study Area", null, 45874, new Date());
+		poi.setCheckpointNumber(45874);
 		poi.setDescription("Study Area");
 		poi.setName("Library");
+		poi.setLastUpdate(new Date());
+		poi.setExpires(new Date());
 		
 		try{
+			getBaseContext().deleteDatabase("GOGGLES_DB");
 		SqliteDAO dao = new SqliteDAO(getBaseContext());
-		dao.saveElementPoi(poi);
+		Gson gson = new Gson();
+		String id =dao.saveElementPoi(poi);
+		
+		Toast.makeText(getBaseContext(), "Original id: " + id, Toast.LENGTH_SHORT).show();
+		tv.setText("");
+		String json = gson.toJson(poi);
+		tv.append(json);
+		poi = null;
+		poi = dao.getElementPoi(id);
+		Toast.makeText(getBaseContext(), "Restored id: " + id, Toast.LENGTH_SHORT).show();		
+		json = gson.toJson(poi);
+		tv.append("\n\n");
+		tv.append(json);
+		return;
 		} catch (Throwable t){
 			
 			System.out.println(t.getMessage());
 			t.printStackTrace();
 			
 		}
-		Toast.makeText(getBaseContext(), "Getting messages from Q", Toast.LENGTH_SHORT).show();
-		new GetMessagesAsync().execute(v);
+		//Toast.makeText(getBaseContext(), "Getting messages from Q", Toast.LENGTH_SHORT).show();
+		//new GetMessagesAsync().execute(v);
 	}	
 	
 	public class GetMessagesAsync extends AsyncTask<View, String, String> {

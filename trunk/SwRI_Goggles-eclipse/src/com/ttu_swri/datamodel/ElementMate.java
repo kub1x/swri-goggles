@@ -12,8 +12,8 @@ import android.location.LocationManager;
 public class ElementMate extends Element {
 
 	// String user_id = null; // Is in Element.Id
-	private String name = null;
-	private String description = null;
+	private String name = "";
+	private String description = "";
 	private Location location = null;
 
 	// Constructors ===========================================================
