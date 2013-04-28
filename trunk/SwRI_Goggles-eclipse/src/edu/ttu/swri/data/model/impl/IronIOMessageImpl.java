@@ -26,12 +26,12 @@ public class IronIOMessageImpl implements GogglesMessage {
 	}
 	
 	@Override
-	public long getSentDate() {
+	public String getSentDate() {
 		return sentDate;
 	}
 	
 	@Override
-	public void setSentDate(long sentDate) {
+	public void setSentDate(String sentDate) {
 		this.sentDate = sentDate;
 	}
 	public MessageType getType() {
@@ -65,7 +65,7 @@ public class IronIOMessageImpl implements GogglesMessage {
 	
 	private String from;
 	private String to;
-	private long sentDate;
+	private String sentDate;
 	private MessageType type;
 	private String gpsLocation;
 	private String msgBody;

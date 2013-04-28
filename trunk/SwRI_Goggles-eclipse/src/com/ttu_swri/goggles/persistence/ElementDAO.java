@@ -8,36 +8,24 @@ import com.ttu_swri.datamodel.ElementPoi;
 
 public interface ElementDAO {
 	
-//	public void saveElementPOI(ElementPoi element){
-//		
-//	}
-//	
-//	public void saveElementPOI(ElementMessage element){
-//		
-//	}	
-//
-//	public void saveElementPOI(ElementMate element){
-//		
-//	}
+	public String saveElementPoi(ElementPoi elementPoi) throws RuntimeException;
 	
-	public String saveElementPoi(ElementPoi elementPoi);
+	public void saveElementPois(Collection<ElementPoi> elementPoiCollection) throws RuntimeException;
 	
-	public void saveElementPois(Collection<ElementPoi> elementPoiCollection);
+	public String saveElementMessage(ElementMessage elementMessage) throws RuntimeException;
 	
-	public String saveElementMessage(ElementMessage elementMessage);
-	
-	public void saveElementMessages(Collection<ElementMessage> elementMessage);
+	public void saveElementMessages(Collection<ElementMessage> elementMessages) throws RuntimeException;
 
-	public String saveElementMate(ElementMate elementMate);
+	public String saveElementMate(ElementMate elementMate) throws RuntimeException;
 	
-	public void saveElementMates(Collection<ElementMate> elementMate);
+	public void saveElementMates(Collection<ElementMate> elementMate) throws RuntimeException;
 	
 	
-	public ElementPoi getElementPoi(String id);
+	public ElementPoi getElementPoi(String id) throws RuntimeException;
 	
 	public Collection<ElementPoi> getElementPois();
 	
-	public ElementMessage getElementMessage(String id);
+	public ElementMessage getElementMessage(String id) throws RuntimeException;
 	
 	public Collection<ElementMessage> getElementMessages();
 	

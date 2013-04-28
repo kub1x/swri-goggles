@@ -2,11 +2,11 @@ package com.ttu_swri.goggles.persistence.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -45,24 +45,15 @@ public class SqliteDAO implements ElementDAO {
 	private static final String MATE_LOCATION = "location";
 	private static final String MATE_DESCRIPTION = "description";	
 	
-	private SQLiteDatabase database;
-	private DatabaseHelper dbHelper;
+	private DatabaseHelper dbHelper = null;
 	
 	public SqliteDAO(Context context){
 		dbHelper = new DatabaseHelper(context);
-	}
-	
-	  private void open() throws SQLException {
-		    database = dbHelper.getWritableDatabase();
-		  }
-	  
-	  private void close() {
-		    dbHelper.close();
-		  }	  
+	}  
 
 	@Override
-	public String saveElementPoi(ElementPoi elementPoi) {
-		open();
+	public String saveElementPoi(ElementPoi elementPoi) {		
+		SQLiteDatabase db = null;
 		ContentValues cv = new ContentValues();
 		cv.put(SqliteDAO.POI_CHECKPOINT, elementPoi.getCheckpointNumber());
 		cv.put(SqliteDAO.POI_DESCRIPTION, elementPoi.getDescription());
@@ -70,9 +61,16 @@ public class SqliteDAO implements ElementDAO {
 		cv.put(SqliteDAO.POI_LAST_UPDATE, elementPoi.getLastUpdate() == null ? "" : elementPoi.getLastUpdate().toGMTString());
 		cv.put(SqliteDAO.POI_LOCATION, locationToString(elementPoi.getLocation()));
 		cv.put(SqliteDAO.POI_NAME, elementPoi.getName());
-		long id = database.insertWithOnConflict(POI_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE); 
-		close();
+		try{
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertWithOnConflict(POI_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE); 
+		db.close();
 		return String.valueOf(id);
+		} finally {
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
 	}
 
 	@Override
@@ -88,7 +86,7 @@ public class SqliteDAO implements ElementDAO {
 
 	@Override
 	public String saveElementMessage(ElementMessage elementMessage) {
-		open();
+		SQLiteDatabase db = null;
 		ContentValues cv = new ContentValues();
 		cv.put(SqliteDAO.MESSAGE_EXPIRES, elementMessage.getExpires().toGMTString());
 		cv.put(SqliteDAO.MESSAGE_IS_ALERT, elementMessage.isAlert());
@@ -96,9 +94,15 @@ public class SqliteDAO implements ElementDAO {
 		//cv.put(SqliteDAO.MESSAGE_SENT_DATE, elementMessage.getSentDate().toGMTString());
 		cv.put(SqliteDAO.MESSAGE_TEXT, elementMessage.getText());
 		cv.put(SqliteDAO.MESSAGE_TOPIC, elementMessage.getTopic());
-		long id = database.insertWithOnConflict(MESSAGE_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-		close();
+		try{
+		db = dbHelper.getWritableDatabase();		
+		long id = db.insertWithOnConflict(MESSAGE_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
 		return String.valueOf(id);
+		} finally {
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
 	}
 
 	@Override
@@ -114,15 +118,22 @@ public class SqliteDAO implements ElementDAO {
 
 	@Override
 	public String saveElementMate(ElementMate elementMate) {
-		open();
+		SQLiteDatabase db = null;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(SqliteDAO.MATE_DESCRIPTION, elementMate.getDescription());
 		cv.put(SqliteDAO.MATE_LAST_UPDATE, elementMate.getLastUpdate().toGMTString());
 		cv.put(SqliteDAO.MATE_LOCATION, locationToString(elementMate.getLocation()));
 		cv.put(SqliteDAO.MATE_NAME, elementMate.getName());
-		long id = database.insertWithOnConflict(MATE_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-		close();
+		try{
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertWithOnConflict(MATE_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);		
 		return String.valueOf(id);
+		} finally {
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
 
 	}
 
@@ -139,131 +150,217 @@ public class SqliteDAO implements ElementDAO {
 
 	@Override
 	public ElementPoi getElementPoi(String id) {
-		open();
-		Cursor cursor = this.database.rawQuery(String.format("SELECT * FROM %s WHERE %s = %s", POI_TABLE, POI_ID, id), null);
-		if(cursor == null || cursor.getCount() < 1){
-			close();
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
+		try{
+		db = dbHelper.getWritableDatabase();
+		cursor = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = %s", POI_TABLE, POI_ID, id), null);
+		if(cursor == null || !cursor.moveToFirst()){
 			return null;
 		}
-		cursor.moveToFirst();
-		ElementPoi poi = new ElementPoi();
-		poi.setCheckpointNumber(cursor.getInt(cursor.getColumnIndex(POI_CHECKPOINT)));
-		poi.setDescription(cursor.getString(cursor.getColumnIndex(POI_DESCRIPTION)));
-		poi.setExpires("".equals(cursor.getString(cursor.getColumnIndex(POI_EXPIRES))) ? null : new java.util.Date(cursor.getString(cursor.getColumnIndex(POI_EXPIRES))));
-		poi.setLastUpdate("".equals(cursor.getString(cursor.getColumnIndex(POI_LAST_UPDATE))) ? null : new java.util.Date(cursor.getString(cursor.getColumnIndex(POI_LAST_UPDATE))));
-		poi.setLocation(stringToLocation(cursor.getString(cursor.getColumnIndex(POI_LOCATION))));
-		poi.setName(cursor.getString(cursor.getColumnIndex(POI_NAME)));
-		close();		
+
+		ElementPoi poi = new ElementPoi(
+		cursor.getString(cursor.getColumnIndex(POI_ID)),
+		cursor.getString(cursor.getColumnIndex(POI_NAME)),
+		cursor.getString(cursor.getColumnIndex(POI_DESCRIPTION)),
+		stringToLocation(cursor.getString(cursor.getColumnIndex(POI_LOCATION))),
+		cursor.getInt(cursor.getColumnIndex(POI_CHECKPOINT)),
+		stringToDate(cursor.getString(cursor.getColumnIndex(POI_EXPIRES))));			
+		poi.setLastUpdate(stringToDate(cursor.getString(cursor.getColumnIndex(POI_LAST_UPDATE))));
+		
 		return poi;
+		} finally {
+		if(cursor != null && !cursor.isClosed()){
+			cursor.close();
+		}			
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}		
 	}
 
 	@Override
 	public Collection<ElementPoi> getElementPois() {
-		open();
-		Cursor cursor = this.database.rawQuery(String.format("SELECT * FROM %s", POI_TABLE), null);		
-		if(cursor == null || cursor.getCount() < 1){
-			close();
-			return null;
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
+		Collection<ElementPoi> poiColl = new ArrayList<ElementPoi>();;
+		try{
+		db = dbHelper.getWritableDatabase();
+		cursor = db.rawQuery(String.format("SELECT * FROM %s", POI_TABLE), null);		
+		if(cursor == null){
+			return poiColl;
 		}		
-		Collection<ElementPoi> poiColl = new ArrayList<ElementPoi>();
-		cursor.moveToFirst();
-		while(cursor.getCount() <= cursor.getPosition()){
-			ElementPoi poi = new ElementPoi();
-			poi.setCheckpointNumber(cursor.getInt(cursor.getColumnIndex(POI_CHECKPOINT)));
-			poi.setDescription(cursor.getString(cursor.getColumnIndex(POI_DESCRIPTION)));
-			poi.setExpires(new java.util.Date(cursor.getString(cursor.getColumnIndex(POI_EXPIRES))));
-			poi.setLastUpdate(new java.util.Date(cursor.getString(cursor.getColumnIndex(POI_LAST_UPDATE))));
-			poi.setLocation(stringToLocation(cursor.getString(cursor.getColumnIndex(POI_LOCATION))));
-			poi.setName(cursor.getString(cursor.getColumnIndex(POI_NAME)));	
+
+		while(cursor.moveToNext()){			
+			ElementPoi poi = new ElementPoi(
+			cursor.getString(cursor.getColumnIndex(POI_ID)),
+			cursor.getString(cursor.getColumnIndex(POI_NAME)),
+			cursor.getString(cursor.getColumnIndex(POI_DESCRIPTION)),
+			stringToLocation(cursor.getString(cursor.getColumnIndex(POI_LOCATION))),
+			cursor.getInt(cursor.getColumnIndex(POI_CHECKPOINT)),
+			stringToDate(cursor.getString(cursor.getColumnIndex(POI_EXPIRES))));			
+			poi.setLastUpdate(stringToDate(cursor.getString(cursor.getColumnIndex(POI_LAST_UPDATE))));
+	
 			poiColl.add(poi);
-			cursor.moveToNext();
-		}
-		close();
+		}		
 		return poiColl;
+		} finally {
+		if(cursor != null && !cursor.isClosed()){
+			cursor.close();
+		}			
+		if(db != null && db.isOpen()){
+			db.close();
+		}		
+		}
+		
 	}
 
 	@Override
 	public ElementMessage getElementMessage(String id) {
-		open();
-		Cursor cursor = this.database.rawQuery(String.format("SELECT * FROM %s WHERE %s = %s", MESSAGE_TABLE, MESSAGE_ID, id), null);
-		if(cursor == null || cursor.getCount() < 1){
-			close();
-			return null;
-		}
-		cursor.moveToFirst();
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
 		ElementMessage em = new ElementMessage();
-		em.setAlert(Boolean.valueOf(cursor.getString(cursor.getColumnIndex(MESSAGE_IS_ALERT))));
-		em.setExpires(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_EXPIRES))));
+		try{
+		db = dbHelper.getWritableDatabase();
+		cursor = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = %s", MESSAGE_TABLE, MESSAGE_ID, id), null);
+		if(cursor == null || !cursor.moveToFirst()){
+			return em;
+		}
+		
+		em = new ElementMessage(
+		cursor.getString(cursor.getColumnIndex(MESSAGE_ID)),
+		cursor.getString(cursor.getColumnIndex(MESSAGE_TOPIC)),
+		cursor.getString(cursor.getColumnIndex(MESSAGE_TEXT)),
+		Boolean.valueOf(cursor.getString(cursor.getColumnIndex(MESSAGE_IS_ALERT))),
+		stringToDate(cursor.getString(cursor.getColumnIndex(MESSAGE_EXPIRES))));
 		em.setLastUpdate(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));
-		em.setText(cursor.getString(cursor.getColumnIndex(MESSAGE_TEXT)));
-		em.setTopic(cursor.getString(cursor.getColumnIndex(MESSAGE_TOPIC)));
-		close();		
 		return em;
+		} finally {
+		if(cursor != null && !cursor.isClosed()){
+			cursor.close();
+		}			
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
+		
 	}
 
 	@Override
 	public Collection<ElementMessage> getElementMessages() {
-		open();
-		Cursor cursor = this.database.rawQuery(String.format("SELECT * FROM %s", POI_TABLE), null);		
-		if(cursor == null || cursor.getCount() < 1){
-			close();
-			return null;
-		}		
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
 		Collection<ElementMessage> emColl = new ArrayList<ElementMessage>();
-		cursor.moveToFirst();
-		while(cursor.getCount() <= cursor.getPosition()){
-			ElementMessage em = new ElementMessage();		
-			em.setAlert(Boolean.valueOf(cursor.getString(cursor.getColumnIndex(MESSAGE_IS_ALERT))));
-			em.setExpires(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_EXPIRES))));
-			em.setLastUpdate(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));
-			em.setText(cursor.getString(cursor.getColumnIndex(MESSAGE_TEXT)));
-			em.setTopic(cursor.getString(cursor.getColumnIndex(MESSAGE_TOPIC)));
+		try{
+		db = dbHelper.getWritableDatabase();
+		cursor = db.rawQuery(String.format("SELECT * FROM %s", MESSAGE_TABLE), null);		
+		if(cursor == null){
+			return emColl;
+		}		
+		while(cursor.moveToNext()){
+			ElementMessage em = new ElementMessage(
+					cursor.getString(cursor.getColumnIndex(MESSAGE_ID)),
+					cursor.getString(cursor.getColumnIndex(MESSAGE_TOPIC)),
+					cursor.getString(cursor.getColumnIndex(MESSAGE_TEXT)),
+					Boolean.valueOf(cursor.getString(cursor.getColumnIndex(MESSAGE_IS_ALERT))),
+					stringToDate(cursor.getString(cursor.getColumnIndex(MESSAGE_EXPIRES))));
+					em.setLastUpdate(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));
 			emColl.add(em);			
 		}
-		close();
 		return emColl;
+		} finally {
+		if(cursor != null && !cursor.isClosed()){
+			cursor.close();
+		}			
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
+		
 	}
 
 	@Override
 	public ElementMate getElementMate(String id) {
-		open();
-		Cursor cursor = this.database.rawQuery(String.format("SELECT * FROM %s WHERE %s = %s", MATE_TABLE, MATE_ID, id), null);
-		if(cursor == null || cursor.getCount() < 1){
-			close();
-			return null;
-		}
-		cursor.moveToFirst();
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
 		ElementMate em = new ElementMate();
-		em.setLocation(stringToLocation(cursor.getString(cursor.getColumnIndex(MATE_LOCATION))));
-		em.setLastUpdate(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));
-		em.setName(cursor.getString(cursor.getColumnIndex(MATE_NAME)));
-		em.setDescription(cursor.getString(cursor.getColumnIndex(MATE_DESCRIPTION)));
-		close();		
+		try{
+		db = dbHelper.getWritableDatabase();
+		cursor = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = %s", MATE_TABLE, MATE_ID, id), null);
+		if(cursor == null || !cursor.moveToFirst()){
+			return em;
+		}
+		em = new ElementMate(
+		cursor.getString(cursor.getColumnIndex(MATE_ID)),
+		cursor.getString(cursor.getColumnIndex(MATE_NAME)),
+		cursor.getString(cursor.getColumnIndex(MATE_DESCRIPTION)),
+		stringToLocation(cursor.getString(cursor.getColumnIndex(MATE_LOCATION)))
+		);
+		em.setLastUpdate(stringToDate(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));		
+	
 		return em;
+		} finally {
+		if(cursor != null && !cursor.isClosed()){
+			cursor.close();
+		}		
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
+		
 	}
 
 	@Override
 	public Collection<ElementMate> getElementMates() {
-		open();
-		Cursor cursor = this.database.rawQuery(String.format("SELECT * FROM %s", MATE_TABLE), null);		
-		if(cursor == null || cursor.getCount() < 1){
-			close();
+		SQLiteDatabase db = null;
+		Cursor cursor = null;
+		Collection<ElementMate> emColl = new ArrayList<ElementMate>();
+		try{
+		db = dbHelper.getWritableDatabase();
+		cursor = db.rawQuery(String.format("SELECT * FROM %s", MATE_TABLE), null);		
+		if(cursor == null){
 			return null;
 		}		
-		Collection<ElementMate> emColl = new ArrayList<ElementMate>();
-		cursor.moveToFirst();
-		while(cursor.getCount() <= cursor.getPosition()){	
-			ElementMate em = new ElementMate();
-			em.setLocation(stringToLocation(cursor.getString(cursor.getColumnIndex(MATE_LOCATION))));
-			em.setLastUpdate(new java.util.Date(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));
-			em.setName(cursor.getString(cursor.getColumnIndex(MATE_NAME)));
-			em.setDescription(cursor.getString(cursor.getColumnIndex(MATE_DESCRIPTION)));
-			close();	
+		
+		while(cursor.moveToNext()){	
+			ElementMate em = new ElementMate(
+					cursor.getString(cursor.getColumnIndex(MATE_ID)),
+					cursor.getString(cursor.getColumnIndex(MATE_NAME)),
+					cursor.getString(cursor.getColumnIndex(MATE_DESCRIPTION)),
+					stringToLocation(cursor.getString(cursor.getColumnIndex(MATE_LOCATION)))
+					);
+					em.setLastUpdate(stringToDate(cursor.getString(cursor.getColumnIndex(MESSAGE_LAST_UPDATE))));
 			emColl.add(em);			
 		}
-		close();
 		return emColl;
+		} finally {
+		if(cursor != null && !cursor.isClosed()){
+			cursor.close();
+		}
+		if(db != null && db.isOpen()){
+			db.close();
+		}
+		}
+		
 	}
+	
+	private Date stringToDate(String date){
+		if(date == null || date.isEmpty()){
+			return null;
+		}
+		try{
+			return new Date(date);
+		} catch(Exception e){
+			return null;
+		}		
+	}
+	
+//	private String dateToString(Date date){
+//		if(date == null){
+//			return null;
+//		}
+//		return date.toGMTString();
+//	}
 	
 	private String locationToString(Location location){
 		if (location == null){
@@ -285,10 +382,6 @@ public class SqliteDAO implements ElementDAO {
 	}	
 	
 	public class DatabaseHelper extends SQLiteOpenHelper {
-		
-		//private String DB_NAME = "GOGGLES_DB";
-		
-		//private int VERSION = 1;
 		
 		private static final String POI_TABLE_CREATE =
                 "CREATE TABLE " + POI_TABLE + " (" +

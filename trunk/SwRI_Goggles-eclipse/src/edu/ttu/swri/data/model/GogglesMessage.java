@@ -7,8 +7,8 @@ public interface GogglesMessage {
 	public void setFrom(String from);
 	public String getTo();
 	public void setTo(String to);
-	public long getSentDate();
-	public void setSentDate(long sentDateinGMTMillis);
+	public String getSentDate();
+	public void setSentDate(String sentDate);
 	public MessageType getType();
 	public void setType(MessageType msgType);
 	public String getGpsLocation();

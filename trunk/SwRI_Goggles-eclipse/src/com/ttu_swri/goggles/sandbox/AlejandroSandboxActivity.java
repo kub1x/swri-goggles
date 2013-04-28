@@ -7,10 +7,11 @@ import io.iron.ironmq.Queue;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -52,18 +53,15 @@ public class AlejandroSandboxActivity extends Activity {
 		 // here we get message by invoking an inner class that allows
 		 // running the request on a different thread, so the UI doesn't freeze
 		
-		ElementPoi poi = new ElementPoi();//("145876", "Library", "Study Area", null, 45874, new Date());
-		poi.setCheckpointNumber(45874);
-		poi.setDescription("Study Area");
-		poi.setName("Library");
-		poi.setLastUpdate(new Date());
-		poi.setExpires(new Date());
+		ElementPoi poi = new ElementPoi("958745625", "Library", "Study Area",
+				new Location(LocationManager.PASSIVE_PROVIDER), 95874, new Date());
 		
 		try{
-			getBaseContext().deleteDatabase("GOGGLES_DB");
+		getBaseContext().deleteDatabase("GOGGLES_DB");
 		SqliteDAO dao = new SqliteDAO(getBaseContext());
+		//UserPrefsDAO dao = new UserPrefsDAO(getBaseContext());
 		Gson gson = new Gson();
-		String id =dao.saveElementPoi(poi);
+		String id = dao.saveElementPoi(poi);
 		
 		Toast.makeText(getBaseContext(), "Original id: " + id, Toast.LENGTH_SHORT).show();
 		tv.setText("");
@@ -75,6 +73,14 @@ public class AlejandroSandboxActivity extends Activity {
 		json = gson.toJson(poi);
 		tv.append("\n\n");
 		tv.append(json);
+		
+//		tv.setText("");
+//		Collection<ElementPoi> pois = dao.getElementPois();
+//		
+//		for(ElementPoi poiInterest : pois){
+//			tv.append(json = gson.toJson(poiInterest) + "\n\n");
+//		}
+		
 		return;
 		} catch (Throwable t){
 			
@@ -141,10 +147,9 @@ public class AlejandroSandboxActivity extends Activity {
 	    	sb.append(newLine + "Text: " + gm.getMsgBody());
 	    	sb.append(newLine + "Sent Date: " + gm.getSentDate());
 	    	
-    		Calendar cal = Calendar.getInstance();
-    		cal.setTimeInMillis(gm.getSentDate());
+    		Date sentDate = new Date(gm.getSentDate());
     		
-    		sb.append(newLine + "Formatted Date: " + SimpleDateFormat.getDateTimeInstance().format(cal.getTime()));
+    		sb.append(newLine + "Formatted Date: " + SimpleDateFormat.getDateTimeInstance().format(sentDate));
     		
     		tv.append(sb.toString());
     		System.out.println(sb.toString());
@@ -164,7 +169,7 @@ public class AlejandroSandboxActivity extends Activity {
 		gm.setFrom("Alex Sandbox Activity");
 		gm.setGpsLocation("Some GPS Location");
 		gm.setMsgBody("This is the Message Text");
-		gm.setSentDate(Calendar.getInstance().getTimeInMillis());
+		gm.setSentDate(new Date(System.currentTimeMillis()).toGMTString());
 		gm.setTo("my_queue");
 		gm.setType(GogglesMessage.MessageType.IM);
 		// we can use the gson.jar library to serialize the object in json format
