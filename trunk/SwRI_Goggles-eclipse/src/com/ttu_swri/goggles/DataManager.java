@@ -28,9 +28,11 @@ public class DataManager {
 		this.elements = new HashMap<String, Element>();
 		this.toSync = new ArrayList<Element>();
 
+		// TODO DELME
+		// This is hardcoded UserInfo for user of goggles
 		this.myUserInfo = new ElementMate();
-		myUserInfo.setName("Popeye");
-		myUserInfo.setDescription("The Sailor Man"); // =D
+		this.myUserInfo.setName("Popeye");
+		this.myUserInfo.setDescription("The Sailor Man"); // =D
 	}
 
 	// Singleton design pattern ===============================================
@@ -57,59 +59,76 @@ public class DataManager {
 	// ========================================================================
 
 	public Collection<Element> getElements() {
-		// TODO create something we can iterate on for Visualization to iterate
-		// on. It should contain copy of our elements from HashMap. Following
-		// code probably returns references to original elements. Need to look
-		// for best practice here.
+		// TODO create something we can iterate on for Visualization. It should
+		// contain copy of our elements from HashMap. Following code probably
+		// returns references to original elements. Need to look for best
+		// practice here.
 		return this.elements.values();
 	}
 
 	/**
-	 * This method serves OUR app, not network, i.e. this is what our user
-	 * created or updated.
+	 * Update adds or updates elements in our elements collection. It also adds
+	 * elements to queue for synchronizing via network. This method serves OUR
+	 * app, not network!, i.e. this is what our user created or updated.
 	 * 
 	 * @param element
 	 */
 	public void update(Element element) {
-		toSync.add(element);
-		update_element(element);
+		if (update_element(element)) {
+			this.toSync.add(element);
+		}
 	}
 
-	private void update_element(Element element) {
+	private boolean update_element(Element element) {
 		synchronized (this) {
 			if (!this.elements.containsKey(element.getId())) {
 				this.elements.put(element.getId(), element);
-				// TODO return true..?
+				return true;
 			} else {
-
 				Element orig = (Element) this.elements.get(element.getId());
 
 				if (orig.isNewerThan(element)) {
-					// DO NOTHING, We already have newest version
-					// TODO at least return false
+					// We already have the newest version
+					return false;
 				} else {
 					// This is just stupid one to one replacement
 					this.elements.remove(element.getId());
 					this.elements.put(element.getId(), element);
 					// TODO XXX !!! How to deal with DELETE? If other user
 					// deletes POI should we delete it too?
+					return true;
 				}
 			}
 		}
 	}
 
-	public void updateFromNetwork(List<JSONObject> elements) throws JSONException {
-		for (JSONObject element : elements) {
+	/**
+	 * This Update method serves for elements we obtained from network sync.
+	 * 
+	 * @param elements
+	 * @throws JSONException
+	 */
+	public void updateFromNetwork(List<String> elements)
+			throws JSONException {
+		for (String element : elements) {
 			update_element(Parser.parseElement(element));
 		}
 	}
 
+	/**
+	 * This getter serves for Network Component. It returns Elements that need
+	 * to be synchronized with other users.
+	 * 
+	 * @return
+	 */
 	public List<Element> getElementsToSync() {
 		// Copy stuff to be sent and clear original
 		List<Element> elements = new ArrayList<Element>(this.toSync);
 		this.toSync.clear(); // TODO clear only when successfully sent..?
+
 		// Add info about current user
-		//elements.add(this.myUserInfo); //TODO XXX UNCOMMENT !!! when the rest is tested
+		// elements.add(this.myUserInfo); //TODO XXX UNCOMMENT !!!
+
 		// Send
 		return elements;
 	}

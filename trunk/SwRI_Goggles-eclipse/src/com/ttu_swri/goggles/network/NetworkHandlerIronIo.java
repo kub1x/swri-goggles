@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
+import com.reconinstruments.webapi.SDKWebService;
 import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
 import com.reconinstruments.webapi.WebRequestMessage.WebMethod;
 import com.reconinstruments.webapi.WebRequestMessage.WebRequestBundle;
@@ -24,12 +25,6 @@ public class NetworkHandlerIronIo {
 	// Singleton Design Pattern ===============================================
 
 	private static NetworkHandlerIronIo nhiiInstance;
-
-	private NetworkHandler nh;
-
-	protected NetworkHandlerIronIo() {
-		this.nh = NetworkHandler.getInstance();
-	}
 
 	public static NetworkHandlerIronIo getInstance() {
 		if (NetworkHandlerIronIo.nhiiInstance == null)
@@ -78,6 +73,8 @@ public class NetworkHandlerIronIo {
 				JSONObject body = new JSONObject();
 				body.put("body", element.toJson());
 				arr.put(body);
+
+				// Log.d(TAG, "parsed: " + element.toJson());
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -102,12 +99,12 @@ public class NetworkHandlerIronIo {
 			public void onComplete(String arg0, String arg1, String arg2,
 					String arg3) {
 				// DO NOTHING
-				Log.d(TAG, "Response to post: \n" + arg0);
+				Log.d(TAG, "Response to POST: \n" + arg0);
 			}
 		};
 
 		// Execute Web request with listener
-		this.nh.send(context, wrb, wrl);
+		this.send(context, wrb, wrl);
 	}
 
 	/**
@@ -135,11 +132,13 @@ public class NetworkHandlerIronIo {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
+		Log.d(TAG, "sending GET");
+
 		WebRequestBundle wrb = new WebRequestBundle(
 				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
 						+ "/messages", WebMethod.GET, "0", header, params);
 
-		this.nh.send(context, wrb, wrl);
+		this.send(context, wrb, wrl);
 	}
 
 	public void delete(Context context, String msgId) {
@@ -154,6 +153,8 @@ public class NetworkHandlerIronIo {
 				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
 						+ "/messages/" + msgId, WebMethod.DELETE, "0", header,
 				params);
+
+		Log.d(TAG, "sending delete:" + msgId);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -171,7 +172,11 @@ public class NetworkHandlerIronIo {
 			}
 		};
 
-		this.nh.send(context, wrb, wrl);
+		this.send(context, wrb, wrl);
 	}
 
+	private void send(Context context, WebRequestBundle wrb,
+			WebResponseListener wrl) {
+		SDKWebService.httpRequest(context, false, 0, wrb, wrl);
+	}
 }

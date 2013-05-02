@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.location.Location;
 
+import com.google.gson.Gson;
 import com.ttu_swri.datamodel.Element.ElementType;
 
 /** @author kub1x */
@@ -39,8 +40,27 @@ public class Parser {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
+
 		return elements;
+	}
+
+	public static Element parseElement(String jsonElement) {
+		Gson g = new Gson();
+		Element el = g.fromJson(jsonElement, Element.class);
+		switch (el.getType()) {
+		case T_MATE:
+			el = g.fromJson(jsonElement, ElementMate.class);
+			break;
+		case T_POI:
+			el = g.fromJson(jsonElement, ElementPoi.class);
+			break;
+		case T_MESSAGE:
+			el = g.fromJson(jsonElement, ElementMessage.class);
+			break;
+		default:
+			el = null;
+		}
+		return el;
 	}
 
 	public static Element parseElement(JSONObject jsonElement)
@@ -96,12 +116,12 @@ public class Parser {
 		location.setLongitude(longitude);
 
 		int checkpointNumber = jsonElement.getInt("checkpointNumber");
-		
+
 		String sExpires = jsonElement.getString("expires");
 		Date expires = null;
 		if (sExpires != "")
 			expires = new Date(sExpires);
-		
+
 		return new ElementPoi(id, lastUpdate, name, description, location,
 				checkpointNumber, expires);
 	}

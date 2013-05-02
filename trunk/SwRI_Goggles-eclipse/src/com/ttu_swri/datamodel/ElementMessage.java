@@ -96,23 +96,23 @@ public class ElementMessage extends Element {
 
 	// ========================================================================
 
-	@Override
-	public JSONObject toJson() {
-		// TODO handle NULL values
-		JSONObject o = super.toJson();
-		try {
-			o.put("topic", this.topic);
-			o.put("text", this.text);
-			o.put("isAlert", this.isAlert);
-			if (this.expires == null)
-				o.put("expires", "");
-			else
-				o.put("expires", this.expires.toGMTString());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return o;
-	}
+	// @Override
+	// public JSONObject toJson() {
+	// // TODO handle NULL values
+	// JSONObject o = super.toJson();
+	// try {
+	// o.put("topic", this.topic);
+	// o.put("text", this.text);
+	// o.put("isAlert", this.isAlert);
+	// if (this.expires == null)
+	// o.put("expires", "");
+	// else
+	// o.put("expires", this.expires.toGMTString());
+	// } catch (JSONException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return o;
+	// }
 
 }

@@ -5,6 +5,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
 /** @author kub1x */
 public class Element implements IElementlike {
 
@@ -22,7 +24,8 @@ public class Element implements IElementlike {
 			return this.jsonName;
 		}
 
-		public static ElementType parseJson(String jsonName) throws JSONException {
+		public static ElementType parseJson(String jsonName)
+				throws JSONException {
 			// if(jsonName == "position")
 			// return T_MY_POS;
 			if (jsonName == "userInfo")
@@ -90,16 +93,17 @@ public class Element implements IElementlike {
 		return this.lastUpdate.after(element.lastUpdate);
 	}
 
-	public JSONObject toJson() {
-		JSONObject o = new JSONObject();
-		try {
-			o.put("id", this.id);
-			o.put("type", this.type.toJson());
-			o.put("lastUpdate", this.lastUpdate.toGMTString());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return o;
+	public String toJson() {
+		// JSONObject o = new JSONObject();
+		// try {
+		// o.put("id", this.id);
+		// o.put("type", this.type.toJson());
+		// o.put("lastUpdate", this.lastUpdate.toGMTString());
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// return o;
+		return new Gson().toJson(this);//.replace("\"", "\\\"");
 	}
 }

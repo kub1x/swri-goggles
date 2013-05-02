@@ -90,23 +90,23 @@ public class ElementMate extends Element {
 
 	// ========================================================================
 
-	@Override
-	public JSONObject toJson() {
-		// TODO handle NULL values
-		JSONObject o = super.toJson();
-		try {
-			o.put("name", this.name);
-			o.put("description", this.description);
-			if (this.location == null)
-				o.put("location", "0,0");
-			else
-				o.put("location", this.location.getLatitude() + ","
-						+ this.location.getLongitude());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return o;
-	}
+	// @Override
+	// public JSONObject toJson() {
+	// // TODO handle NULL values
+	// JSONObject o = super.toJson();
+	// try {
+	// o.put("name", this.name);
+	// o.put("description", this.description);
+	// if (this.location == null)
+	// o.put("location", "0,0");
+	// else
+	// o.put("location", this.location.getLatitude() + ","
+	// + this.location.getLongitude());
+	// } catch (JSONException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return o;
+	// }
 
 }

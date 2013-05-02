@@ -6,7 +6,9 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
 import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
+import com.reconinstruments.webapi.WebRequestMessage.WebMethod;
 import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.datamodel.ElementMate;
 import com.ttu_swri.datamodel.ElementMessage;
@@ -16,6 +18,8 @@ import com.ttu_swri.goggles.R;
 import com.ttu_swri.goggles.network.NetworkHandlerIronIo;
 import com.ttu_swri.goggles.network.NetworkSyncService;
 
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +44,7 @@ public class JakubSandboxActivity extends Activity {
 		Button bShow = (Button) findViewById(R.id.j_button_show);
 		Button bSync = (Button) findViewById(R.id.j_button_sync);
 		Button bCrea = (Button) findViewById(R.id.j_button_create);
+		Button bExtra = (Button) findViewById(R.id.j_button_extra);
 
 		bShow.setOnClickListener(new OnClickListener() {
 			@Override
@@ -62,6 +67,12 @@ public class JakubSandboxActivity extends Activity {
 			}
 		});
 
+		bExtra.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				printJson();
+			}
+		});
 		// On following parts you can examine testing and usage examples of
 		// various components of our program
 		// createData();
@@ -78,12 +89,19 @@ public class JakubSandboxActivity extends Activity {
 			this.dm.update(new ElementMate("Anand",
 					"The one with sorted closet. "));
 
+			double latitude = 33.586661;
+			double longitude = -101.879246;
+			Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
+			loc.setLatitude(latitude);
+			loc.setLongitude(longitude);
 			this.dm.update(new ElementPoi("Woody",
-					"horse statue by Murray hall", null));
+					"horse statue by Murray hall", loc));
 
 			this.dm.update(new ElementMessage("argh!", "they killed me!!"));
-			this.dm.update(new ElementMate("Austin", "The Fruit King. "));
-			this.dm.update(new ElementMate("Vlad", "\"I Love Rock'n'Roll!\""));
+
+			// this.dm.update(new ElementMate("Austin", "The Fruit King. "));
+			// this.dm.update(new ElementMate("Vlad",
+			// "\"I Love Rock'n'Roll!\""));
 		}
 	}
 
@@ -120,9 +138,10 @@ public class JakubSandboxActivity extends Activity {
 			public void onComplete(String response, String statusCode,
 					String statusId, String requestId) {
 				try {
-					Log.d(TAG, "Response to get: \n" + response);
+					Log.i(TAG, "Response to get: \n" + response);
+
 					List<String> ids = new ArrayList<String>();
-					List<JSONObject> elements = new ArrayList<JSONObject>();
+					List<String> elements = new ArrayList<String>();
 
 					NetworkSyncService.parseMessages(response, ids, elements);
 
@@ -133,6 +152,7 @@ public class JakubSandboxActivity extends Activity {
 						nh.delete(getApplicationContext(), id);
 					}
 				} catch (JSONException e) {
+					Log.d(TAG, "JSON fail");
 					e.printStackTrace();
 				}
 			}
@@ -146,8 +166,16 @@ public class JakubSandboxActivity extends Activity {
 		});
 
 		// Send newly created or updated data
-		nh.post(getApplicationContext(), dm.getElementsToSync());
+//		 nh.post(getApplicationContext(), dm.getElementsToSync());
 
+	}
+
+	void printJson() {
+//		final DataManager dm = DataManager.getInstance();
+//		for (Element el : this.dm.getElements()) {
+//			Log.d(TAG, el.toJson());
+//		}
+		Log.d(TAG, "Delete method string: " + WebMethod.DELETE);
 	}
 
 }

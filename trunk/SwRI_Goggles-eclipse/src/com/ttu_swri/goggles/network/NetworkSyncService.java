@@ -54,7 +54,7 @@ public class NetworkSyncService extends Service {
 						String statusId, String requestId) {
 					try {
 						List<String> ids = new ArrayList<String>();
-						List<JSONObject> elements = new ArrayList<JSONObject>();
+						List<String> elements = new ArrayList<String>();
 
 						parseMessages(response, ids, elements);
 
@@ -84,7 +84,7 @@ public class NetworkSyncService extends Service {
 
 	};
 
-	public static void parseMessages(String json, List<String> ids, List<JSONObject> elements)
+	public static void parseMessages(String json, List<String> ids, List<String> elements)
 			throws JSONException {
 		// {"messages":[{"id":"5824513078343549739","body":"hello","timeout":60}]}
 
@@ -103,7 +103,7 @@ public class NetworkSyncService extends Service {
 			ids.add(msg_id);
 
 			// We want only body of the message
-			JSONObject oElem = oMesg.getJSONObject("body");
+			String oElem = oMesg.getString("body");
 
 			// The body is our original element.. parse it!
 			elements.add(oElem);
