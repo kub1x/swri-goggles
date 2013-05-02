@@ -1,181 +1,237 @@
 package com.ttu_swri.goggles.sandbox;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DecimalFormat;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
-import com.reconinstruments.webapi.WebRequestMessage.WebMethod;
 import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.datamodel.ElementMate;
 import com.ttu_swri.datamodel.ElementMessage;
 import com.ttu_swri.datamodel.ElementPoi;
+import com.ttu_swri.datamodel.IVisualizer;
 import com.ttu_swri.goggles.DataManager;
 import com.ttu_swri.goggles.R;
-import com.ttu_swri.goggles.network.NetworkHandlerIronIo;
 import com.ttu_swri.goggles.network.NetworkSyncService;
 
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 
 public class JakubSandboxActivity extends Activity {
-	private static final String TAG = "JakubSandboxActivity";
+	// private static final String TAG = "JakubSandboxActivity";
 
-	// TESTING data model, DataManager and custom Visualizer
-	DataManager dm = null;
+	private Intent netIntent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_jakub_sandbox);
 
-		this.dm = DataManager.getInstance();
+		netIntent = new Intent(this, NetworkSyncService.class);
 
-		Button bShow = (Button) findViewById(R.id.j_button_show);
-		Button bSync = (Button) findViewById(R.id.j_button_sync);
-		Button bCrea = (Button) findViewById(R.id.j_button_create);
-		Button bExtra = (Button) findViewById(R.id.j_button_extra);
-
-		bShow.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showData();
-			}
-		});
-
-		bSync.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				syncData();
-			}
-		});
-
-		bCrea.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				createData();
-			}
-		});
-
-		bExtra.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				printJson();
-			}
-		});
-		// On following parts you can examine testing and usage examples of
-		// various components of our program
-		// createData();
-		// syncData();
-		// showData();
+		startNet();
+		startGps();
 	}
 
 	// ==============================================================================
 	// ==============================================================================
 	// ==============================================================================
 
-	void createData() {
-		{
-			this.dm.update(new ElementMate("Anand",
-					"The one with sorted closet. "));
+	private void startNet() {
+		// Create and register new Button Visualizer
+		ButtonVisualizer bv = new ButtonVisualizer(
+				(LinearLayout) findViewById(R.id.j_sand_datalist));
+		DataManager.getInstance().register(bv);
 
-			double latitude = 33.586661;
-			double longitude = -101.879246;
-			Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
-			loc.setLatitude(latitude);
-			loc.setLongitude(longitude);
-			this.dm.update(new ElementPoi("Woody",
-					"horse statue by Murray hall", loc));
-
-			this.dm.update(new ElementMessage("argh!", "they killed me!!"));
-
-			// this.dm.update(new ElementMate("Austin", "The Fruit King. "));
-			// this.dm.update(new ElementMate("Vlad",
-			// "\"I Love Rock'n'Roll!\""));
-		}
+		// Start network sync service
+		startService(netIntent);
 	}
 
-	void showData() {
-		LinearLayout lv = (LinearLayout) findViewById(R.id.j_sand_datalist);
-		lv.removeAllViews();
-		for (Element el : this.dm.getElements()) {
-			Button but = new Button(getBaseContext());
-			but.setText(el.getId());
-			// but.setOnClickListener(new OnClickListener() {
-			// @Override
-			// public void onClick(View arg0) {
-			// // TODO Auto-generated method stub
-			// String id = get_element_id_associated_with_this_button();
-			// Element el = dm.getElement(id);
-			// Toast prName = Toast.makeText(getBaseContext(), el.detail_text,
-			// Toast.LENGTH_SHORT);
-			// prName.setGravity(Gravity.AXIS_SPECIFIED, 0, 0);
-			// prName.show();
-			// }
-			// });
-			lv.addView(but);
-		}
-	}
+	private void startGps() {
+		// Start GPS service
+		// startService(new Intent(this, MyPositionUpdateService.class));
 
-	public void syncData() {
-		// Singletons can be final here and so reused in callback
-		final NetworkHandlerIronIo nh = NetworkHandlerIronIo.getInstance();
-		final DataManager dm = DataManager.getInstance();
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0,
+				new LocationListener() {
+					DecimalFormat df = new DecimalFormat("#.000000");
 
-		// Get new data from network
-		nh.get(getApplicationContext(), new WebResponseListener() {
-			@Override
-			public void onComplete(String response, String statusCode,
-					String statusId, String requestId) {
-				try {
-					Log.i(TAG, "Response to get: \n" + response);
-
-					List<String> ids = new ArrayList<String>();
-					List<String> elements = new ArrayList<String>();
-
-					NetworkSyncService.parseMessages(response, ids, elements);
-
-					dm.updateFromNetwork(elements);
-
-					// Update successfull, send deletes
-					for (String id : ids) {
-						nh.delete(getApplicationContext(), id);
+					@Override
+					public void onStatusChanged(String provider, int status,
+							Bundle extras) {
+						// TODO Auto-generated method stub
 					}
-				} catch (JSONException e) {
-					Log.d(TAG, "JSON fail");
-					e.printStackTrace();
+
+					@Override
+					public void onProviderEnabled(String provider) {
+						// TODO Auto-generated method stub
+					}
+
+					@Override
+					public void onProviderDisabled(String provider) {
+						// TODO Auto-generated method stub
+					}
+
+					@Override
+					public void onLocationChanged(Location location) {
+						TextView tv = (TextView) findViewById(R.id.j_sand_location);
+						String text = "Loc: "
+								+ df.format(location.getLatitude()) + ", "
+								+ df.format(location.getLongitude());
+
+						tv.setText(text);
+					}
+				});
+
+	}
+
+	private class ButtonVisualizer implements IVisualizer {
+
+		DataManager dm;
+		LinearLayout ll;
+
+		public ButtonVisualizer(LinearLayout ll) {
+			this.dm = DataManager.getInstance();
+			this.ll = ll;
+		}
+
+		@Override
+		public void update() {
+			ll.removeAllViews();
+			for (Element el : this.dm.getElements()) {
+				MyButton but = new MyButton(getBaseContext(), el);
+				ll.addView(but);
+			}
+		}
+
+		private class MyButton extends Button {
+
+			DecimalFormat df = new DecimalFormat("#.0000");
+			private Element element;
+			String location = "";
+
+			private Paint m_paint = new Paint();
+			private int m_color = 0XFF92C84D; // LIKE AN OLIVE GREEN..
+
+			public MyButton(Context context, Element element) {
+				super(context);
+
+				this.element = element;
+
+				Location loc;
+				switch (element.getType()) {
+				case T_MATE:
+					setText(((ElementMate) element).getName());
+					loc = ((ElementMate) element).getLocation();
+					double lat = loc.getLatitude();
+					double lon = loc.getLongitude();
+					location = "Loc: " + df.format(lat) + ", " + df.format(lon);
+					break;
+				case T_POI:
+					setText(((ElementPoi) element).getName());
+					loc = ((ElementPoi) element).getLocation();
+					location = df.format(loc.getLatitude()) + "\n"
+							+ df.format(loc.getLongitude());
+					break;
+				case T_MESSAGE:
+					setText(((ElementMessage) element).getTopic());
+					break;
+				default:
 				}
+
+				this.setOnClickListener((OnClickListener) new MyOnClickListener(
+						element));
 			}
 
 			@Override
-			public void onComplete(byte[] response, String statusCode,
-					String statusId, String requestId) {
-				// Not used
+			protected void onDraw(Canvas canvas) {
+				super.onDraw(canvas);
+				m_paint.setColor(Color.DKGRAY);
+				canvas.drawText(location, 5, 15, m_paint);
 			}
 
-		});
+			class MyOnClickListener implements OnClickListener {
+				Element element;
 
-		// Send newly created or updated data
-//		 nh.post(getApplicationContext(), dm.getElementsToSync());
+				public MyOnClickListener(Element element) {
+					this.element = element;
+				}
+
+				@Override
+				public void onClick(View arg0) {
+					switch (element.getType()) {
+					case T_MATE:
+						toast(((ElementMate) element).getDescription());
+						break;
+					case T_POI:
+						toast(((ElementPoi) element).getDescription());
+						break;
+					case T_MESSAGE:
+						toast(((ElementMessage) element).getText());
+						break;
+					default:
+						toast("unknown element: " + element.getId());
+					}
+				}
+
+				void toast(String text) {
+					Toast prName = Toast.makeText(getBaseContext(), text,
+							Toast.LENGTH_LONG);
+					prName.setGravity(Gravity.AXIS_SPECIFIED, 0, 0);
+					prName.show();
+				}
+
+			}
+
+		}
 
 	}
 
-	void printJson() {
-//		final DataManager dm = DataManager.getInstance();
-//		for (Element el : this.dm.getElements()) {
-//			Log.d(TAG, el.toJson());
-//		}
-		Log.d(TAG, "Delete method string: " + WebMethod.DELETE);
+	@Override
+	protected void onPause() {
+		stopService(netIntent);
+		// TODO Auto-generated method stub
+		super.onPause();
 	}
 
+	@Override
+	protected void onResume() {
+		startService(netIntent);
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+
+	// @Override
+	// protected void onRestart() {
+	// startService(netIntent);
+	// // TODO Auto-generated method stub
+	// super.onRestart();
+	//
+	// }
+	//
+	// @Override
+	// protected void onStop() {
+	// stopService(netIntent);
+	// // TODO Auto-generated method stub
+	// super.onStop();
+	// }
+
+	@Override
+	protected void onDestroy() {
+		stopService(netIntent);
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
 }

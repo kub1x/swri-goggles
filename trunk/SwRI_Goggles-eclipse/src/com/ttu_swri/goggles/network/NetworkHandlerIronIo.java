@@ -56,15 +56,13 @@ public class NetworkHandlerIronIo {
 	 * @param wrl
 	 */
 	public void post(Context context, List<Element> elements) {
-		Log.d(TAG, "Sending " + elements.size() + "elements through post");
-
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
 		header.add(new BasicNameValuePair("Content-Type", "application/json"));
 		header.add(new BasicNameValuePair("Authorization", "OAuth " + TOKEN));
 
 		// Create message body in form:
-		// {"messages":[{"body": ELEMENT_JSON_OBJECT }]}
+		// {"messages":[{"body": ELEMENT_JSON_STRING }]}
 		JSONObject messages = new JSONObject();
 		JSONArray arr = new JSONArray();
 		try {
@@ -73,14 +71,10 @@ public class NetworkHandlerIronIo {
 				JSONObject body = new JSONObject();
 				body.put("body", element.toJson());
 				arr.put(body);
-
-				// Log.d(TAG, "parsed: " + element.toJson());
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-		Log.d(TAG, "posting: \n" + messages.toString());
 
 		// Create request
 		WebRequestBundle wrb = new WebRequestBundle(
@@ -102,6 +96,8 @@ public class NetworkHandlerIronIo {
 				Log.d(TAG, "Response to POST: \n" + arg0);
 			}
 		};
+
+		Log.d(TAG, "Sending POST: \n" + messages.toString());
 
 		// Execute Web request with listener
 		this.send(context, wrb, wrl);
@@ -132,11 +128,11 @@ public class NetworkHandlerIronIo {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-		Log.d(TAG, "sending GET");
-
 		WebRequestBundle wrb = new WebRequestBundle(
 				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
 						+ "/messages", WebMethod.GET, "0", header, params);
+
+		Log.d(TAG, "Sending GET");
 
 		this.send(context, wrb, wrl);
 	}
@@ -154,8 +150,6 @@ public class NetworkHandlerIronIo {
 						+ "/messages/" + msgId, WebMethod.DELETE, "0", header,
 				params);
 
-		Log.d(TAG, "sending delete:" + msgId);
-
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
 			@Override
@@ -172,6 +166,8 @@ public class NetworkHandlerIronIo {
 			}
 		};
 
+		Log.d(TAG, "Sending DELETE:" + msgId);
+
 		this.send(context, wrb, wrl);
 	}
 
@@ -179,4 +175,5 @@ public class NetworkHandlerIronIo {
 			WebResponseListener wrl) {
 		SDKWebService.httpRequest(context, false, 0, wrb, wrl);
 	}
+
 }

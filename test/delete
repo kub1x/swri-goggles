@@ -1,0 +1,9 @@
+MESSAGE_ID="$1"
+
+curl \
+  -H "Authorization: OAuth zvS2csbud0tr6zgNbmjo9mSPByU" \
+  -H "Content-Type: application/json" \
+  -X DELETE \
+  "https://mq-aws-us-east-1.iron.io/1/projects/51661401ed3d7657b60014bc/queues/goggles/messages/${MESSAGE_ID}"
+
+echo

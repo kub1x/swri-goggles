@@ -15,22 +15,31 @@ import com.ttu_swri.goggles.DataManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 /** @author kub1x */
 public class NetworkSyncService extends Service {
+	private final String TAG = "NetworkSyncService";
 
 	private Timer timer;
 
 	public NetworkSyncService() {
-		timer = new Timer();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		timer = new Timer();
 		int delay = 0; // NOW
-		int period = 5 * 1000; // 5sec
+		int period = 2000; // 2sec
 		timer.schedule(new NetworkSyncTimerTask(), delay, period);
 		return super.onStartCommand(intent, flags, startId);
+	}
+	
+	@Override
+	public void onDestroy() {
+		timer.cancel();
+		// TODO Auto-generated method stub
+		super.onDestroy();
 	}
 
 	@Override
@@ -53,6 +62,8 @@ public class NetworkSyncService extends Service {
 				public void onComplete(String response, String statusCode,
 						String statusId, String requestId) {
 					try {
+						Log.d(TAG, "Syncing...");
+
 						List<String> ids = new ArrayList<String>();
 						List<String> elements = new ArrayList<String>();
 
@@ -60,7 +71,7 @@ public class NetworkSyncService extends Service {
 
 						dm.updateFromNetwork(elements);
 
-						// Update successfull, send deletes 
+						// Update successfull, send deletes
 						for (String id : ids) {
 							nh.delete(getApplicationContext(), id);
 						}
@@ -78,14 +89,14 @@ public class NetworkSyncService extends Service {
 			});
 
 			// Send newly created or updated data
-			nh.post(getApplicationContext(), dm.getElementsToSync());
+			// nh.post(getApplicationContext(), dm.getElementsToSync());
 
 		}
 
 	};
 
-	public static void parseMessages(String json, List<String> ids, List<String> elements)
-			throws JSONException {
+	public static void parseMessages(String json, List<String> ids,
+			List<String> elements) throws JSONException {
 		// {"messages":[{"id":"5824513078343549739","body":"hello","timeout":60}]}
 
 		// Parse the body of message

@@ -16,44 +16,20 @@
         android:scrollbars="vertical"
         tools:context=".JakubSandboxActivity" >
 
-        <LinearLayout
-            android:id="@+id/j_sand_buttons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/j_button_sync"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sync" />
-
-            <Button
-                android:id="@+id/j_button_show"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Show" />
-
-            <Button
-                android:id="@+id/j_button_create"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create" />
-
-            <Button
-                android:id="@+id/j_button_extra"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Extra" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/j_sand_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:textColor="#FF92C84D"
+            android:background="#222222"
+            />
 
         <LinearLayout
             android:id="@+id/j_sand_datalist"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/j_sand_buttons"
+            android:layout_below="@id/j_sand_location"
             android:orientation="vertical" >
         </LinearLayout>
     </RelativeLayout>

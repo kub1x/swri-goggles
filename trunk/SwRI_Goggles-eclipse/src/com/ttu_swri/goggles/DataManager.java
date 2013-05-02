@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.datamodel.ElementMate;
+import com.ttu_swri.datamodel.IVisitable;
+import com.ttu_swri.datamodel.IVisualizer;
 import com.ttu_swri.datamodel.Parser;
 
 import android.location.Location;
@@ -19,6 +20,7 @@ public class DataManager {
 
 	private HashMap<String, Element> elements = null;
 	private List<Element> toSync = null;
+	private List<IVisualizer> visualizers = null;
 
 	private ElementMate myUserInfo = null;
 
@@ -27,6 +29,7 @@ public class DataManager {
 	private DataManager() {
 		this.elements = new HashMap<String, Element>();
 		this.toSync = new ArrayList<Element>();
+		this.visualizers = new ArrayList<IVisualizer>();
 
 		// TODO DELME
 		// This is hardcoded UserInfo for user of goggles
@@ -54,6 +57,20 @@ public class DataManager {
 
 	public void setMyLocation(Location location) {
 		this.myUserInfo.setLocation(location);
+	}
+
+	// ========================================================================
+
+	public void register(IVisualizer visualizer) {
+		if (!this.visualizers.contains(visualizer)) {
+			this.visualizers.add(visualizer);
+			visualizer.update();
+		}
+	}
+
+	private void updateAllVisualizers() {
+		for (IVisualizer visu : this.visualizers)
+			visu.update();
 	}
 
 	// ========================================================================
@@ -108,11 +125,14 @@ public class DataManager {
 	 * @param elements
 	 * @throws JSONException
 	 */
-	public void updateFromNetwork(List<String> elements)
-			throws JSONException {
+	public void updateFromNetwork(List<String> elements) throws JSONException {
+		boolean changed = false;
 		for (String element : elements) {
-			update_element(Parser.parseElement(element));
+			changed |= update_element(Parser.parseElement(element));
 		}
+
+		if (changed)
+			updateAllVisualizers();
 	}
 
 	/**

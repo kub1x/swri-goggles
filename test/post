@@ -1,0 +1,7 @@
+curl.exe \
+  -H "Content-Type: application/json" \
+  -H "Authorization: OAuth zvS2csbud0tr6zgNbmjo9mSPByU" \
+  -d "@${1}" \
+  "http://mq-aws-us-east-1.iron.io/1/projects/51661401ed3d7657b60014bc/queues/goggles/messages"
+
+echo
