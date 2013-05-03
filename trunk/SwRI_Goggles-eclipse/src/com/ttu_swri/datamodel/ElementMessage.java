@@ -2,9 +2,6 @@ package com.ttu_swri.datamodel;
 
 import java.util.Date;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /** @author kub1x */
 public class ElementMessage extends Element {
 

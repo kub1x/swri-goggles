@@ -2,9 +2,6 @@ package com.ttu_swri.datamodel;
 
 import java.util.Date;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.google.gson.Gson;
 
 /** @author kub1x */
@@ -24,19 +21,19 @@ public class Element implements IElementlike {
 			return this.jsonName;
 		}
 
-		public static ElementType parseJson(String jsonName)
-				throws JSONException {
-			// if(jsonName == "position")
-			// return T_MY_POS;
-			if (jsonName == "userInfo")
-				return T_MATE;
-			if (jsonName == "poi")
-				return T_POI;
-			if (jsonName == "message")
-				return T_MESSAGE;
-
-			throw new JSONException("Invalid ElementType name");
-		}
+		// public static ElementType parseJson(String jsonName)
+		// throws JSONException {
+		// // if(jsonName == "position")
+		// // return T_MY_POS;
+		// if (jsonName == "userInfo")
+		// return T_MATE;
+		// if (jsonName == "poi")
+		// return T_POI;
+		// if (jsonName == "message")
+		// return T_MESSAGE;
+		//
+		// throw new JSONException("Invalid ElementType name");
+		// }
 	}
 
 	protected final String id;

@@ -9,7 +9,6 @@ import org.json.JSONException;
 
 import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.datamodel.ElementMate;
-import com.ttu_swri.datamodel.IVisitable;
 import com.ttu_swri.datamodel.IVisualizer;
 import com.ttu_swri.datamodel.Parser;
 

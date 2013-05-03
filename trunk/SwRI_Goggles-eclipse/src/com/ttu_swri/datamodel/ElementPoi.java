@@ -2,9 +2,6 @@ package com.ttu_swri.datamodel;
 
 import java.util.Date;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.location.Location;
 import android.location.LocationManager;
 
