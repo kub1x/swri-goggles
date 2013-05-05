@@ -7,10 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 /** @author kub1x */
 public class Parser {
+
+	private static final String TAG = "Goggles_Parser";
 
 	public static List<Element> parse(String json) {
 		List<Element> elements = new ArrayList<Element>();
@@ -41,20 +46,25 @@ public class Parser {
 	}
 
 	public static Element parseElement(String jsonElement) {
-		Gson g = new Gson();
-		Element el = g.fromJson(jsonElement, Element.class);
-		switch (el.getType()) {
-		case T_MATE:
-			el = g.fromJson(jsonElement, ElementMate.class);
-			break;
-		case T_POI:
-			el = g.fromJson(jsonElement, ElementPoi.class);
-			break;
-		case T_MESSAGE:
-			el = g.fromJson(jsonElement, ElementMessage.class);
-			break;
-		default:
-			el = null;
+		Element el = null;
+		try {
+			Gson g = new Gson();
+			el = g.fromJson(jsonElement, Element.class);
+			switch (el.getType()) {
+			case T_MATE:
+				el = g.fromJson(jsonElement, ElementMate.class);
+				break;
+			case T_POI:
+				el = g.fromJson(jsonElement, ElementPoi.class);
+				break;
+			case T_MESSAGE:
+				el = g.fromJson(jsonElement, ElementMessage.class);
+				break;
+			default:
+				el = null;
+			}
+		} catch (JsonSyntaxException e) {
+			Log.d(TAG, "Parser failed on Gson:\n" + e.getLocalizedMessage());
 		}
 		return el;
 	}
