@@ -8,32 +8,7 @@ import com.google.gson.Gson;
 public class Element implements IElementlike {
 
 	public enum ElementType {
-		// T_MY_POS("position"),
-		T_MATE("userInfo"), T_POI("poi"), T_MESSAGE("message");
-
-		private final String jsonName;
-
-		private ElementType(String jsonName) {
-			this.jsonName = jsonName;
-		}
-
-		public String toJson() {
-			return this.jsonName;
-		}
-
-		// public static ElementType parseJson(String jsonName)
-		// throws JSONException {
-		// // if(jsonName == "position")
-		// // return T_MY_POS;
-		// if (jsonName == "userInfo")
-		// return T_MATE;
-		// if (jsonName == "poi")
-		// return T_POI;
-		// if (jsonName == "message")
-		// return T_MESSAGE;
-		//
-		// throw new JSONException("Invalid ElementType name");
-		// }
+		T_MATE, T_POI, T_MESSAGE;
 	}
 
 	protected final String id;
@@ -90,17 +65,12 @@ public class Element implements IElementlike {
 		return this.lastUpdate.after(element.lastUpdate);
 	}
 
+	// ========================================================================
+
 	public String toJson() {
-		// JSONObject o = new JSONObject();
-		// try {
-		// o.put("id", this.id);
-		// o.put("type", this.type.toJson());
-		// o.put("lastUpdate", this.lastUpdate.toGMTString());
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// return o;
-		return new Gson().toJson(this);//.replace("\"", "\\\"");
+		return new Gson().toJson(this);
 	}
+
+	// ========================================================================
+
 }

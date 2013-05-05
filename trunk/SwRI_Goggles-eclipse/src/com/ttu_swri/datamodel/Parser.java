@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.ttu_swri.datamodel.Element.ElementType;
 
 /** @author kub1x */
 public class Parser {
@@ -47,10 +48,11 @@ public class Parser {
 
 	public static Element parseElement(String jsonElement) {
 		Element el = null;
+		Gson g = new Gson();
 		try {
-			Gson g = new Gson();
-			el = g.fromJson(jsonElement, Element.class);
-			switch (el.getType()) {
+			JSONObject jo = new JSONObject(jsonElement);
+			ElementType type = ElementType.valueOf(jo.getString("type"));
+			switch (type) {
 			case T_MATE:
 				el = g.fromJson(jsonElement, ElementMate.class);
 				break;
@@ -64,7 +66,11 @@ public class Parser {
 				el = null;
 			}
 		} catch (JsonSyntaxException e) {
-			Log.d(TAG, "Parser failed on Gson:\n" + e.getLocalizedMessage());
+			Log.d(TAG,
+					"Parser failed on Gson parse:\n" + e.getLocalizedMessage());
+		} catch (JSONException e) {
+			Log.d(TAG,
+					"Parser failed on JSON parse:\n" + e.getLocalizedMessage());
 		}
 		return el;
 	}

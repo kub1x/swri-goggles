@@ -57,36 +57,36 @@ public class NetworkSyncService extends Service {
 			final DataManager dm = DataManager.getInstance();
 
 			// Get new data from network
-			// nh.get(getApplicationContext(), new WebResponseListener() {
-			// @Override
-			// public void onComplete(String response, String statusCode,
-			// String statusId, String requestId) {
-			// try {
-			// Log.d(TAG, "Syncing...");
-			//
-			// List<String> ids = new ArrayList<String>();
-			// List<String> elements = new ArrayList<String>();
-			//
-			// parseMessages(response, ids, elements);
-			//
-			// dm.updateFromNetwork(elements);
-			//
-			// // Update successfull, send deletes
-			// for (String id : ids) {
-			// nh.delete(getApplicationContext(), id);
-			// }
-			// } catch (JSONException e) {
-			// e.printStackTrace();
-			// }
-			// }
-			//
-			// @Override
-			// public void onComplete(byte[] response, String statusCode,
-			// String statusId, String requestId) {
-			// // Not used
-			// }
-			//
-			// });
+			nh.get(getApplicationContext(), new WebResponseListener() {
+				@Override
+				public void onComplete(String response, String statusCode,
+						String statusId, String requestId) {
+					try {
+						Log.d(TAG, "Syncing...");
+
+						List<String> ids = new ArrayList<String>();
+						List<String> elements = new ArrayList<String>();
+
+						parseMessages(response, ids, elements);
+
+						dm.updateFromNetwork(elements);
+
+						// Update successfull, send deletes
+						for (String id : ids) {
+							nh.delete(getApplicationContext(), id);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void onComplete(byte[] response, String statusCode,
+						String statusId, String requestId) {
+					// Not used
+				}
+
+			});
 
 			// Send newly created or updated data
 			nh.post(getApplicationContext(), dm.getElementsToSync());
