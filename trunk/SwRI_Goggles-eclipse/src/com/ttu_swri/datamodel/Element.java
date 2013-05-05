@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.gson.Gson;
 
 /** @author kub1x */
-public class Element implements IElementlike {
+public class Element {
 
 	public enum ElementType {
 		T_MATE, T_POI, T_MESSAGE;
@@ -28,13 +28,6 @@ public class Element implements IElementlike {
 		this.id = id;
 		this.type = type;
 		this.lastUpdate = lastUpdate;
-	}
-
-	// Visitor Design Pattern =================================================
-
-	@Override
-	public void accept(IVisitable visitor) {
-		visitor.visit(this);
 	}
 
 	// Getters/Setters ========================================================
