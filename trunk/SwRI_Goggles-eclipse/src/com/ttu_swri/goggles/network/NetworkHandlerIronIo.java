@@ -56,6 +56,9 @@ public class NetworkHandlerIronIo {
 	 * @param wrl
 	 */
 	public void post(Context context, List<Element> elements) {
+		if (elements.size() <= 0)
+			return;
+
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
 		header.add(new BasicNameValuePair("Content-Type", "application/json"));
@@ -78,8 +81,8 @@ public class NetworkHandlerIronIo {
 
 		// Create request
 		WebRequestBundle wrb = new WebRequestBundle(
-				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_OUT_NAME
-						+ "/messages", WebMethod.POST, "2", header, messages);
+				"IntentFilterActionName", URL + "/" + QUEUE_OUT_NAME
+						+ "/messages", WebMethod.POST, "1", header, messages);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -129,8 +132,8 @@ public class NetworkHandlerIronIo {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 		WebRequestBundle wrb = new WebRequestBundle(
-				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
-						+ "/messages", WebMethod.GET, "0", header, params);
+				"IntentFilterActionName", URL + "/" + QUEUE_IN_NAME
+						+ "/messages", WebMethod.GET, "1", header, params);
 
 		Log.d(TAG, "Sending GET");
 
@@ -146,8 +149,8 @@ public class NetworkHandlerIronIo {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 		WebRequestBundle wrb = new WebRequestBundle(
-				"com.ttu_swri.goggles.sandbox", URL + "/" + QUEUE_IN_NAME
-						+ "/messages/" + msgId, WebMethod.DELETE, "0", header,
+				"IntentFilterActionName", URL + "/" + QUEUE_IN_NAME
+						+ "/messages/" + msgId, WebMethod.DELETE, "1", header,
 				params);
 
 		// Create (empty) response listener

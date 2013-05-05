@@ -53,7 +53,9 @@ public class JakubSandboxActivity extends Activity {
 		// Create and register new Button Visualizer
 		ButtonVisualizer bv = new ButtonVisualizer(
 				(LinearLayout) findViewById(R.id.j_sand_datalist));
-		DataManager.getInstance().register(bv);
+		DataManager dm = DataManager.getInstance();
+		dm.register(bv);
+		dm.update(new ElementMessage("test", "testing message for engage"));
 
 		// Start network sync service
 		startService(netIntent);
