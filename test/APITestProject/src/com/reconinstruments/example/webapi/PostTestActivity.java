@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -19,19 +21,27 @@ import com.reconinstruments.webapi.WebRequestMessage.WebRequestBundle;
 
 /**
  * 
- *  Simple Example that shows the guideline for making POST HTTP REQUEST
- *  using ReconWebAPIs.
- *  
- *  used following website to test POST REQUEST
- *  
- *  http://postcatcher.in/
+ * Simple Example that shows the guideline for making POST HTTP REQUEST using
+ * ReconWebAPIs.
  * 
- *  @author Patrick Cho
- *
+ * used following website to test POST REQUEST
+ * 
+ * http://postcatcher.in/
+ * 
+ * @author Patrick Cho
+ * 
  */
 
 public class PostTestActivity extends Activity {
 	private static final String TAG = "PostTestActivity";
+
+	private static String PROJECT_ID = "51661401ed3d7657b60014bc";
+	private static String TOKEN = "zvS2csbud0tr6zgNbmjo9mSPByU";
+	private static String QUEUE_NAME = "goggles";
+	// private static String QUEUE_OUT_NAME = "test_user";
+
+	private static String URL = "https://mq-aws-us-east-1.iron.io:443/1/projects/"
+			+ PROJECT_ID + "/queues/" + QUEUE_NAME + "/messages";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -42,44 +52,42 @@ public class PostTestActivity extends Activity {
 
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
-		header.add(new BasicNameValuePair("Content-Type","application/json"));
+		header.add(new BasicNameValuePair("Content-Type", "application/json"));
+		header.add(new BasicNameValuePair("Authorization", "OAuth " + TOKEN));
 
-		// Create a JSONObject for data entity 
-		JSONObject object = new JSONObject();
+		// Create a JSONObject for data entity
+		JSONObject messages = new JSONObject();
+		JSONArray arr = new JSONArray();
 		try {
-			object.put("format", "json");
-			object.put("topic", "order/created");
-			object.put("url", "http://myshop.example.com/notify_me");
-		} catch (Exception e) {
-			Log.e(TAG, e.getLocalizedMessage());
-		} 
+			messages.put("messages", arr);
+			JSONObject body = new JSONObject();
+			body.put("body", "TEST");
+			arr.put(body);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
-		WebRequestBundle wrb = new WebRequestBundle(
-				"IntentFilterActionName",
-				"http://postcatcher.in/catchers/50b546a71911cb0200000840" ,
-				WebMethod.POST,
-				"1",
-				header,
-				object
-				);
+		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
+				URL, WebMethod.POST, "1", header, messages);
 
-		SDKWebService.httpRequest(getBaseContext(), false, 0, wrb, new WebResponseListener(){
+		Log.d(TAG, "SENDING DATA!");
 
-			@Override
-			public void onComplete(byte[] response, String statusCode, String statusId, String requestId) {
-				Log.d(TAG, "onComplete byte[] statusCode : " + statusCode);
-				Log.d(TAG, "onComplete byte[] statusId   : " + statusCode);
-				Log.d(TAG, "onComplete byte[] requestId  : " + statusCode);
-				Log.d(TAG, "onComplete byte[] content    : " + new String(response));
-			}
+		SDKWebService.httpRequest(getBaseContext(), false, 0, wrb,
+				new WebResponseListener() {
 
-			@Override
-			public void onComplete(String response, String statusCode, String statusId, String requestId) {
-				Log.d(TAG, "onComplete String content    : " + response);
-			}
-			
-		});
+					@Override
+					public void onComplete(byte[] response, String statusCode,
+							String statusId, String requestId) {
+						// DO NOTHING
+					}
 
+					@Override
+					public void onComplete(String response, String statusCode,
+							String statusId, String requestId) {
+						Log.d(TAG, "onComplete String content    : " + response);
+					}
+
+				});
 
 	}
 }
