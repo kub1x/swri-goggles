@@ -79,7 +79,14 @@
             android:name="org.ttu_swri.goggles.ui.MessagesActivity"
             android:label="@string/title_activity_messages" >
         </activity>
-        <service android:name=".network.NetworkSyncService"></service>
+
+        <service
+            android:name=".network.NetworkSyncService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.ttu_swri.goggles.network.NETWORK_SYNC_SERVICE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

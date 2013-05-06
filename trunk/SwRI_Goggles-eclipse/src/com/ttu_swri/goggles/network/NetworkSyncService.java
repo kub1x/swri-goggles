@@ -12,41 +12,52 @@ import org.json.JSONObject;
 import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
 import com.ttu_swri.goggles.DataManager;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 /** @author kub1x */
-public class NetworkSyncService extends Service {
-	private final String TAG = "NetworkSyncService";
-
+public class NetworkSyncService extends IntentService {
+	private static final String TAG = "NetworkSyncService";
+	public static final String NETWORK_SYNC_SERVICE = "com.ttu_swri.goggles.network.NETWORK_SYNC_SERVICE";
 	private Timer timer;
+	private NetworkSyncTimerTask task;
 
+	/**
+	 * This constructor avoids java.lang.InstantiationException see:
+	 * http://stackoverflow
+	 * .com/questions/6176255/why-do-i-get-an-instantiationexception
+	 * -if-i-try-to-start-a-service
+	 */
 	public NetworkSyncService() {
+		this(".network.NetworkSyncService");
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public NetworkSyncService(String name) {
+		super(name);
 		timer = new Timer();
+		task = new NetworkSyncTimerTask();
+	}
+
+	// @Override
+	// public void onCreate() {
+	// }
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
 		int delay = 0; // NOW
-		int period = 2000; // 2sec
-		timer.schedule(new NetworkSyncTimerTask(), delay, period);
-		return super.onStartCommand(intent, flags, startId);
+		int period = 2000; // 5 sec
+		timer.schedule(task, delay, period);
 	}
 
 	@Override
-	public void onDestroy() {
+	public boolean stopService(Intent name) {
 		timer.cancel();
-		// TODO Auto-generated method stub
-		super.onDestroy();
+		task.cancel();
+		return super.stopService(name);
 	}
 
-	@Override
-	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	// ------------------------------------------------------------------------
 
 	class NetworkSyncTimerTask extends TimerTask {
 
@@ -57,44 +68,53 @@ public class NetworkSyncService extends Service {
 			final DataManager dm = DataManager.getInstance();
 
 			// Get new data from network
-			nh.get(getApplicationContext(), new WebResponseListener() {
-				@Override
-				public void onComplete(String response, String statusCode,
-						String statusId, String requestId) {
-					try {
-						Log.d(TAG, "Syncing...");
-
-						List<String> ids = new ArrayList<String>();
-						List<String> elements = new ArrayList<String>();
-
-						parseMessages(response, ids, elements);
-
-						dm.updateFromNetwork(elements);
-
-						// Update successfull, send deletes
-						for (String id : ids) {
-							nh.delete(getApplicationContext(), id);
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void onComplete(byte[] response, String statusCode,
-						String statusId, String requestId) {
-					// Not used
-				}
-
-			});
+			// nh.get(getApplicationContext(), new WebResponseListener() {
+			// @Override
+			// public void onComplete(String response, String statusCode,
+			// String statusId, String requestId) {
+			// try {
+			// Log.d(TAG, "Syncing...");
+			//
+			// List<String> ids = new ArrayList<String>();
+			// List<String> elements = new ArrayList<String>();
+			//
+			// parseMessages(response, ids, elements);
+			//
+			// dm.updateFromNetwork(elements);
+			//
+			// // Update successfull, send deletes
+			// for (String id : ids) {
+			// nh.delete(getApplicationContext(), id);
+			// }
+			// } catch (JSONException e) {
+			// e.printStackTrace();
+			// }
+			// }
+			//
+			// @Override
+			// public void onComplete(byte[] response, String statusCode,
+			// String statusId, String requestId) {
+			// // Not used
+			// }
+			//
+			// });
 
 			// Send newly created or updated data
-			nh.post(getApplicationContext(), dm.getElementsToSync());
+			nh.post(getBaseContext(), dm.getElementsToSync());
 
 		}
 
 	};
 
+	/**
+	 * 
+	 * @param json
+	 * @param ids
+	 * @param elements
+	 * @throws JSONException
+	 *             Every possible error in JSON here means we have wrong message
+	 *             format and is therefore critical.
+	 */
 	public static void parseMessages(String json, List<String> ids,
 			List<String> elements) throws JSONException {
 		// {"messages":[{"id":"5824513078343549739","body":"hello","timeout":60}]}

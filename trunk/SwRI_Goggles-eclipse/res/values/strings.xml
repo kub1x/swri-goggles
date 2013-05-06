@@ -26,5 +26,7 @@
     <string name="title_activity_messages">MessagesActivity</string>
     <string name="POIs">Points of Interest</string>
     <string name="RTMM">Return to Main Menu</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 
 </resources>
