@@ -40,7 +40,7 @@ public class NetworkHandlerIronIo {
 	private static String QUEUE_OUT_NAME = "test_user";
 
 	private static String URL = "https://mq-aws-us-east-1.iron.io:443/1/projects/"
-			+ PROJECT_ID + "/queues/"; // + QUEUE_NAME + "/messages";
+			+ PROJECT_ID + "/queues";
 
 	/**
 	 * Method for posting updated or created elements Implementation of
@@ -55,10 +55,7 @@ public class NetworkHandlerIronIo {
 	 * @param element
 	 * @param wrl
 	 */
-	public void post(Context context, List<Element> elements) {
-		if (elements.size() <= 0)
-			return;
-
+	public void post(Context context, Element element) {
 		// Setting HTTP Headers
 		List<NameValuePair> header = new ArrayList<NameValuePair>();
 		header.add(new BasicNameValuePair("Content-Type", "application/json"));
@@ -70,19 +67,17 @@ public class NetworkHandlerIronIo {
 		JSONArray arr = new JSONArray();
 		try {
 			messages.put("messages", arr);
-			for (Element element : elements) {
-				JSONObject body = new JSONObject();
-				body.put("body", element.toJson());
-				arr.put(body);
-			}
+			JSONObject body = new JSONObject();
+			body.put("body", element.toJson());
+			arr.put(body);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		// Create request
-		WebRequestBundle wrb = new WebRequestBundle(
-				"IntentFilterActionName", URL + "/" + QUEUE_OUT_NAME
-						+ "/messages", WebMethod.POST, "1", header, messages);
+		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
+				URL + "/" + QUEUE_OUT_NAME + "/messages", WebMethod.POST, "1",
+				header, messages);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -131,9 +126,9 @@ public class NetworkHandlerIronIo {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-		WebRequestBundle wrb = new WebRequestBundle(
-				"IntentFilterActionName", URL + "/" + QUEUE_IN_NAME
-						+ "/messages", WebMethod.GET, "1", header, params);
+		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
+				URL + "/" + QUEUE_IN_NAME + "/messages", WebMethod.GET, "1",
+				header, params);
 
 		Log.d(TAG, "Sending GET");
 
@@ -148,10 +143,9 @@ public class NetworkHandlerIronIo {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-		WebRequestBundle wrb = new WebRequestBundle(
-				"IntentFilterActionName", URL + "/" + QUEUE_IN_NAME
-						+ "/messages/" + msgId, WebMethod.DELETE, "1", header,
-				params);
+		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
+				URL + "/" + QUEUE_IN_NAME + "/messages/" + msgId,
+				WebMethod.DELETE, "1", header, params);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -174,7 +168,7 @@ public class NetworkHandlerIronIo {
 		this.send(context, wrb, wrl);
 	}
 
-	private void send(Context context, WebRequestBundle wrb,
+	public void send(Context context, WebRequestBundle wrb,
 			WebResponseListener wrl) {
 		SDKWebService.httpRequest(context, false, 0, wrb, wrl);
 	}

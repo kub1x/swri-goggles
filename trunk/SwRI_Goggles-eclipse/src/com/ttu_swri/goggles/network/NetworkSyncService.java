@@ -2,14 +2,13 @@ package com.ttu_swri.goggles.network;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.reconinstruments.webapi.SDKWebService.WebResponseListener;
+import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.goggles.DataManager;
 
 import android.app.IntentService;
@@ -20,8 +19,6 @@ import android.util.Log;
 public class NetworkSyncService extends IntentService {
 	private static final String TAG = "NetworkSyncService";
 	public static final String NETWORK_SYNC_SERVICE = "com.ttu_swri.goggles.network.NETWORK_SYNC_SERVICE";
-	private Timer timer;
-	private NetworkSyncTimerTask task;
 
 	/**
 	 * This constructor avoids java.lang.InstantiationException see:
@@ -35,8 +32,6 @@ public class NetworkSyncService extends IntentService {
 
 	public NetworkSyncService(String name) {
 		super(name);
-		timer = new Timer();
-		task = new NetworkSyncTimerTask();
 	}
 
 	// @Override
@@ -45,66 +40,57 @@ public class NetworkSyncService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		int delay = 0; // NOW
-		int period = 2000; // 5 sec
-		timer.schedule(task, delay, period);
+		sync();
 	}
 
 	@Override
 	public boolean stopService(Intent name) {
-		timer.cancel();
-		task.cancel();
 		return super.stopService(name);
 	}
 
 	// ------------------------------------------------------------------------
 
-	class NetworkSyncTimerTask extends TimerTask {
+	void sync() {
+		// Singletons can be final here and so reused in callback
+		final NetworkHandlerIronIo nh = NetworkHandlerIronIo.getInstance();
+		final DataManager dm = DataManager.getInstance();
 
-		@Override
-		public void run() {
-			// Singletons can be final here and so reused in callback
-			final NetworkHandlerIronIo nh = NetworkHandlerIronIo.getInstance();
-			final DataManager dm = DataManager.getInstance();
+		// Get new data from network
+		nh.get(getApplicationContext(), new WebResponseListener() {
+			@Override
+			public void onComplete(String response, String statusCode,
+					String statusId, String requestId) {
+				try {
+					Log.d(TAG, "Syncing...");
 
-			// Get new data from network
-			// nh.get(getApplicationContext(), new WebResponseListener() {
-			// @Override
-			// public void onComplete(String response, String statusCode,
-			// String statusId, String requestId) {
-			// try {
-			// Log.d(TAG, "Syncing...");
-			//
-			// List<String> ids = new ArrayList<String>();
-			// List<String> elements = new ArrayList<String>();
-			//
-			// parseMessages(response, ids, elements);
-			//
-			// dm.updateFromNetwork(elements);
-			//
-			// // Update successfull, send deletes
-			// for (String id : ids) {
-			// nh.delete(getApplicationContext(), id);
-			// }
-			// } catch (JSONException e) {
-			// e.printStackTrace();
-			// }
-			// }
-			//
-			// @Override
-			// public void onComplete(byte[] response, String statusCode,
-			// String statusId, String requestId) {
-			// // Not used
-			// }
-			//
-			// });
+					List<String> ids = new ArrayList<String>();
+					List<String> elements = new ArrayList<String>();
 
-			// Send newly created or updated data
-			nh.post(getBaseContext(), dm.getElementsToSync());
+					parseMessages(response, ids, elements);
 
-		}
+					dm.updateFromNetwork(elements);
 
-	};
+					// Update successfull, send deletes
+					for (String id : ids) {
+						nh.delete(getApplicationContext(), id);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onComplete(byte[] response, String statusCode,
+					String statusId, String requestId) {
+				// Not used
+			}
+
+		});
+
+		// Send newly created or updated data
+		for (Element el : dm.getElementsToSync())
+			nh.post(getBaseContext(), el);
+	}
 
 	/**
 	 * 
