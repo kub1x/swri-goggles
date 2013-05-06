@@ -156,7 +156,7 @@ public class UserPrefsDAO implements ElementDAO {
 		ArrayList<ElementMessage> msgList = new ArrayList<ElementMessage>();
 		Set<String> keySet =  msgPrefs.getAll().keySet();
 		for(String key : keySet){		 
-			msgList.add(gson.fromJson(poiPrefs.getString(key, null), ElementMessage.class));
+			msgList.add(gson.fromJson(msgPrefs.getString(key, null), ElementMessage.class));
 		}
 		return msgList;
 	}
@@ -174,7 +174,7 @@ public class UserPrefsDAO implements ElementDAO {
 		ArrayList<ElementMate> mateList = new ArrayList<ElementMate>();
 		Set<String> keySet =  matePrefs.getAll().keySet();
 		for(String key : keySet){		 
-			mateList.add(gson.fromJson(poiPrefs.getString(key, null), ElementMate.class));
+			mateList.add(gson.fromJson(matePrefs.getString(key, null), ElementMate.class));
 		}
 		return mateList;
 	}
