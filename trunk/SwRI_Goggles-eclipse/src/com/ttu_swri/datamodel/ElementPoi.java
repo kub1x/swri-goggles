@@ -11,6 +11,8 @@ public class ElementPoi extends Element {
 	// String poi_id = null; // Is in Element.Id
 	private String name = null;
 	private String description = null;
+	private double latitude = 0;
+	private double longitude = 0;	
 	private Location location = null;
 	private int checkpointNumber = -1;
 	private Date expires = null;
@@ -92,12 +94,32 @@ public class ElementPoi extends Element {
 	}
 
 	public void setLocation(Location position) {
-		if (location == null)
+		if (position == null){
 			this.location = new Location(LocationManager.PASSIVE_PROVIDER);
-		else
+		}
+		else {
 			this.location = position;
+			this.latitude = position.getLatitude();
+			this.longitude = position.getLongitude();
+		}
 		this.justEdited();
 	}
+	
+	public double getLatitude(){
+		return this.latitude;
+	}
+	
+	public void setLatitude(double latitude){
+		this.latitude = latitude;		
+	}
+	
+	public double getLongitude(){
+		return this.longitude;
+	}
+	
+	public void setLongitude(double longitude){
+		this.longitude = longitude;
+	}	
 
 	public int getCheckpointNumber() {
 		return checkpointNumber;
