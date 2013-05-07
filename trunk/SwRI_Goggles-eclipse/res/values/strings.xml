@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Goggles</string>
     <string name="hello_world">Hello Goggles &amp; Github world :D!</string>
     <string name="menu_settings">Settings</string>
@@ -16,6 +15,7 @@
     <string name="button_goggles_app">Final Goggles App</string>
     <string name="title_activity_goggles_main">Goggles Main</string>
     <string name="title_activity_menu">MenuActivity</string>
+    <string name="tab_view_activity">TabView</string>    
     <string name="POI">Points of Interest</string>
     <string name="CurrentLocation">Current Location</string>
     <string name="FriendsLocation">Friend\'s Location</string>
@@ -29,5 +29,6 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="title_activity_send_message">SendMessage</string>
-
+    <string name="project_id">51661401ed3d7657b60014bc</string>
+    <string name="token">zvS2csbud0tr6zgNbmjo9mSPByU</string>
 </resources>
