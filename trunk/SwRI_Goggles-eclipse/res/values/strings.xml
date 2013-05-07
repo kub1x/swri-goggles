@@ -28,5 +28,6 @@
     <string name="RTMM">Return to Main Menu</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="title_activity_send_message">SendMessage</string>
 
 </resources>

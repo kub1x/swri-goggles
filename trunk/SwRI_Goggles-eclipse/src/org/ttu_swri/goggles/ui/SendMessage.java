@@ -4,19 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.ttu_swri.goggles.R;
-import com.ttu_swri.goggles.sandbox.SebastianSandboxActivity;
-//import com.ttu_swri.goggles.R.layout;
-//import com.ttu_swri.goggles.R.menu;
 
-public class POIActivity extends Activity {
+public class SendMessage extends Activity {
 	
 	private ListView mainListView ;  
 	  private ArrayAdapter<String> listAdapter ; 
@@ -24,7 +19,7 @@ public class POIActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_poi);
+		setContentView(R.layout.activity_send_message);
 		
 		// Find the ListView resource.   
 	    mainListView = (ListView) findViewById( R.id.listView1 );  
@@ -38,14 +33,7 @@ public class POIActivity extends Activity {
 	    // Create ArrayAdapter using the planet list.  
 	    listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);  
 	      
-	    // Add more planets. If you passed a String[] instead of a List<String>   
-	    // into the ArrayAdapter constructor, you must not add more items.   
-	    // Otherwise an exception will occur.  
-	    //listAdapter.add( "Ceres" );  
-	    //listAdapter.add( "Pluto" );  
-	    //listAdapter.add( "Haumea" );  
-	    //listAdapter.add( "Makemake" );  
-	    //listAdapter.add( "Eris" );  
+	 
 	      
 	    // Set the ArrayAdapter as the ListView's adapter.  
 	    mainListView.setAdapter( listAdapter ); 
@@ -54,18 +42,8 @@ public class POIActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.poi, menu);
+		getMenuInflater().inflate(R.menu.send_message, menu);
 		return true;
-		
-		
-	}
-	//Changes from POIs Activity to Main Menu
-	public void RTMM(View MainMenu) {
-
-		Intent intent = new Intent();
-		intent.setClass(this, SebastianSandboxActivity.class);
-
-		startActivity(intent);
 	}
 
 }
