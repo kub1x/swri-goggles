@@ -235,7 +235,7 @@ public class TabViewActivity extends TabActivity {
 
       	  @Override
       	  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-      		  Toast.makeText(getApplicationContext(), "In Messages", Toast.LENGTH_SHORT).show();
+      		  //Toast.makeText(getApplicationContext(), "In Messages", Toast.LENGTH_SHORT).show();
       	  }
       	});
         
@@ -248,7 +248,7 @@ public class TabViewActivity extends TabActivity {
         		  if(!lvf.getSelectedItem().toString().contains("Found") && !lvf.getSelectedItem().toString().contains("Update")){
         		  AppContext.dao.getMessagesFrom(lvf.getSelectedItem().toString());
         		  }
-        		  Toast.makeText(getApplicationContext(), "In Item Selected", Toast.LENGTH_SHORT).show();
+        		 // Toast.makeText(getApplicationContext(), "In Item Selected", Toast.LENGTH_SHORT).show();
         	  }
         	  
         	  @Override
