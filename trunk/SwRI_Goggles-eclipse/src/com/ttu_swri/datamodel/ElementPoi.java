@@ -64,7 +64,7 @@ public class ElementPoi extends Element {
 
 		this.name = name;
 		this.description = description;
-		this.location = location;
+		this.setLocation(location);
 		this.checkpointNumber = checkpointNumber;
 		this.expires = expires;
 	}
