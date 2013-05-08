@@ -16,43 +16,10 @@
         android:scrollbars="vertical"
         tools:context=".JakubSandboxActivity" >
 
-        <LinearLayout
-            android:id="@+id/j_sand_controll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="19dp"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/j_sand_but_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start" />
-
-            <Button
-                android:id="@+id/j_sand_but_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stop" />
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/j_sand_location"
+            android:id="@+id/j_sand_navigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/j_sand_controll"
-            android:background="#222222"
-            android:textColor="#FF92C84D" />
-
-        <LinearLayout
-            android:id="@+id/j_sand_datalist"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/j_sand_location"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
 </ScrollView>
