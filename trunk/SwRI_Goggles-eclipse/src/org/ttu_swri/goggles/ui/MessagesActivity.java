@@ -24,10 +24,10 @@ public class MessagesActivity extends Activity {
 		return true;
 	}
 	//Changes from Message Activity to Main Menu
-	public void RTMM(View MainMenu) {
+	public void SendMessage(View SendMessage) {
 
 		Intent intent = new Intent();
-		intent.setClass(this, SebastianSandboxActivity.class);
+		intent.setClass(this, SendMessage.class);
 		startActivity(intent);
 	}
 
