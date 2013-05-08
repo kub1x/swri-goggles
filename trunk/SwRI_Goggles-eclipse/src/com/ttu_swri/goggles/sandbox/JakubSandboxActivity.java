@@ -4,6 +4,21 @@ import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.TabActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TabHost;
+import android.widget.Toast;
+
 import com.ttu_swri.datamodel.Element;
 import com.ttu_swri.datamodel.ElementMate;
 import com.ttu_swri.datamodel.ElementMessage;
@@ -13,37 +28,28 @@ import com.ttu_swri.goggles.DataManager;
 import com.ttu_swri.goggles.R;
 import com.ttu_swri.goggles.network.NetworkSyncService;
 
-import android.location.Location;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-
-public class JakubSandboxActivity extends Activity {
+public class JakubSandboxActivity extends TabActivity {
 	@SuppressWarnings("unused")
 	private static final String TAG = JakubSandboxActivity.class
 			.getSimpleName();
 
 	private ButtonVisualizer bv;
-
+    private TabHost tabHost;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_jakub_sandbox);
+		setContentView(R.layout.tabview);
+		
+        tabHost = getTabHost();
+        tabHost.addTab(tabHost.newTabSpec("Friendlies").setIndicator("Friendlies").setContent(R.id.layout_tab_friends));
+        tabHost.addTab(tabHost.newTabSpec("Notifications").setIndicator("Notifications").setContent(R.id.layout_tab_messages));
+        tabHost.addTab(tabHost.newTabSpec("Markers").setIndicator("Markers").setContent(R.id.layout_tab_pois));		
 
-		// Visualizer
-		bv = new ButtonVisualizer(
-				(LinearLayout) findViewById(R.id.j_sand_datalist));
-		DataManager dm = DataManager.getInstance();
-		dm.register(bv);
+//		// Visualizer
+//		bv = new ButtonVisualizer(
+//				(LinearLayout) findViewById(R.id.j_sand_datalist));
+//		DataManager dm = DataManager.getInstance();
+//		dm.register(bv);
 
 		// Example data for testing POST
 		// Element element = new ElementMessage("test",
