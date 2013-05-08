@@ -1,17 +1,18 @@
 package com.ttu_swri.goggles;
 
-import com.ttu_swri.goggles.sandbox.AlejandroSandboxActivity;
-import com.ttu_swri.goggles.sandbox.AotuoSandboxActivity;
-import com.ttu_swri.goggles.sandbox.JakubSandboxActivity;
-import com.ttu_swri.goggles.sandbox.SebastianSandboxActivity;
+import org.ttu_swri.goggles.ui.TabViewActivity;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.ttu_swri.goggles.sandbox.AotuoSandboxActivity;
+import com.ttu_swri.goggles.sandbox.JakubSandboxActivity;
+import com.ttu_swri.goggles.sandbox.SebastianSandboxActivity;
 
 public class MainActivity extends Activity {
 
@@ -55,7 +56,7 @@ public class MainActivity extends Activity {
 				switch (v.getId()) {
 				case R.id.but_aleja:
 					startActivity(new Intent(getBaseContext(),
-							AlejandroSandboxActivity.class));
+							TabViewActivity.class));
 					break;
 
 				case R.id.but_aotuo:

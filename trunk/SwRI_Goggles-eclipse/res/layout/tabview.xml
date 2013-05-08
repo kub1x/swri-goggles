@@ -1,0 +1,64 @@
+    <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@android:id/tabhost" android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+     
+            <LinearLayout android:orientation="vertical"
+                    android:layout_width="fill_parent" android:layout_height="fill_parent">
+                    
+                    <TabWidget android:id="@android:id/tabs"
+                            android:layout_width="fill_parent" android:layout_height="wrap_content" />
+                            
+                    <FrameLayout android:id="@android:id/tabcontent"
+                            android:layout_width="fill_parent" android:layout_height="fill_parent" 
+                            android:background="#282828" > 
+                           <!--  android:background="#282828"  -->
+     
+     						<!-- End Tab 1 -->
+     						
+                             <LinearLayout android:id="@+id/layout_tab_friends"
+                                    android:orientation="vertical" android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent">
+                                    <include  layout="@layout/friendlies_layout" android:id="@+id/include_friendlies" />
+                                    <!-- 
+				                         <TextView  
+					    					android:layout_width="fill_parent"
+					    					android:layout_height="wrap_content" 
+					    					android:text="Some Friends Go Here!"
+					    					/>
+                                    -->
+                            </LinearLayout>
+                            
+                            <!-- End Tab 1 -->
+     
+     						<!-- Begin Tab 2 -->
+     
+                            <LinearLayout android:id="@+id/layout_tab_messages"
+                                    android:orientation="vertical" android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent">
+                                     <include  layout="@layout/layout_notifications" android:id="@+id/include_messages" />
+     
+                            </LinearLayout>
+							<!-- End Tab 2 -->
+                            <!-- Begin Tab 3 -->
+                            
+                             <LinearLayout android:id="@+id/layout_tab_pois"
+                                    android:orientation="vertical" android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent">
+                                    
+				                         <TextView  
+					    					android:layout_width="fill_parent"
+					    					android:layout_height="wrap_content" 
+					    					android:text="Some POIs Go Here!"
+					    					/>								
+                                   
+                            </LinearLayout>                            
+                            
+                            <!-- End Tab 3 -->
+                            
+                            
+                    </FrameLayout>
+            </LinearLayout>
+     
+     
+    </TabHost>
+
