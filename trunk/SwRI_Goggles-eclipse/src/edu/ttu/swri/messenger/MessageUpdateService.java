@@ -45,7 +45,7 @@ public class MessageUpdateService extends Service {
 		@Override
 		public void run() {
 			try{
-			Client client = new Client(AppContext.getProjectId(), AppContext.getToken(), Cloud.ironAWSUSEast);
+			Client client =    new Client(AppContext.getProjectId(), AppContext.getToken(), Cloud.ironAWSUSEast);
 			Queue queue = client.queue(AppContext.getCurrentUserName() + "-im");
 			int queueSize = 0;
 			Message msg = new Message();	

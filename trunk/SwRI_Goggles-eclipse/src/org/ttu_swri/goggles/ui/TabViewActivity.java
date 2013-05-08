@@ -37,7 +37,6 @@ import com.ttu_swri.goggles.R;
 import com.ttu_swri.goggles.persistence.impl.UserPrefsDAO;
 
 import edu.ttu.swri.messenger.AppContext;
-import edu.ttu.swri.messenger.location.LocationUpdateService;
 
 public class TabViewActivity extends TabActivity {
     ReconSDKManager mDataManager   = ReconSDKManager.Initialize(this);
@@ -100,7 +99,8 @@ public class TabViewActivity extends TabActivity {
     }
     
 	public void updateFriends(){
-		new GetFriendsAsync().execute("","","");	
+		//stopAllServices();
+		//new GetFriendsAsync().execute("","","");	
 	}
 	
 	public void startStopTracking(){
@@ -132,7 +132,7 @@ public class TabViewActivity extends TabActivity {
 				
 				StringBuilder sb = new StringBuilder();
 				if(computedDistance[0] > -1){
-					String measure = computedDistance[0] < 800 ? " Ft " : " Mi ";
+					String measure = computedDistance[0] < 800 ? " ft " : " mi ";
 					sb.append(convertToFeet(computedDistance[0]) + measure);
 				} else {
 					sb.append("N/A");
@@ -181,10 +181,10 @@ public class TabViewActivity extends TabActivity {
 				setUpdatedFriendLocationText();
 				saveRelativeLocation();
 			} else if (intent.getAction().equals((AppContext.getFriendMessageAction()))) {	
-				ElementMessage msg = gson.fromJson(intent.getExtras().getString("MESSAGE_BODY"), ElementMessage.class);
+				ElementMessage msg = gson.fromJson(intent.getExtras().getString(AppContext.getMessageBodyExtra()), ElementMessage.class);
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(Long.valueOf(msg.getId()));
-				Toast.makeText(getApplicationContext(), msg.getText(), Toast.LENGTH_SHORT);
+				Toast.makeText(getApplicationContext(), "New Message From " + msg.getFrom(), Toast.LENGTH_SHORT).show();
 			}
 		}
 
@@ -192,17 +192,13 @@ public class TabViewActivity extends TabActivity {
 
 
 	public void populateFriendlies(){
-		
-		/// send location for testing
-		//LocationUpdateService locUpdate = new LocationUpdateService();		
-		//locUpdate.sendLocationUpdate();	
     	ArrayList<ElementMate> friends = (ArrayList<ElementMate>) userPrefsDao.getElementMates();
     	ArrayList<String> friendlies = new ArrayList<String>();
     	if(friends == null ||friends.isEmpty()){
     		friendlies.add("None Found");
-    	} else {
+    	} else {			
+			if(receiver == null){
 			receiver = new InnerFriendUpdateReceiver();
-			if(receiver != null){
 			registerReceiver(receiver, filter);   
 			}
 			startMessageUpdateService(); 
@@ -211,7 +207,7 @@ public class TabViewActivity extends TabActivity {
     	}
     		
     	}
-    	friendlies.add("Update List");
+    	//friendlies.add("Update List");
     	
         lv = (ListView) findViewById(R.id.friendly_list);
         lvf = (ListView) findViewById(R.id.friendly_list_messages);
@@ -227,10 +223,6 @@ public class TabViewActivity extends TabActivity {
 
         	  @Override
         	  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-        		  if(lv.getItemAtPosition(position).toString().equals("Update List")){
-        			  stopFriendLocationUpdateService();        		
-        			  updateFriends();
-        		  }
         			AppContext.setCurrentUserFriend(lv.getItemAtPosition(position).toString());
                     startStopTracking();
         			//this.setConversation();
@@ -238,13 +230,34 @@ public class TabViewActivity extends TabActivity {
         	  }
         	});
         
+        
         lvf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
       	  @Override
       	  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
       		  Toast.makeText(getApplicationContext(), "In Messages", Toast.LENGTH_SHORT).show();
       	  }
-      	});        
+      	});
+        
+        lvf.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        	  @Override
+        	  public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+        		  TextView tvMessages = (TextView) findViewById(R.id.tv_messages);
+        		  tvMessages.setText("");
+        		  if(!lvf.getSelectedItem().toString().contains("Found") && !lvf.getSelectedItem().toString().contains("Update")){
+        		  AppContext.dao.getMessagesFrom(lvf.getSelectedItem().toString());
+        		  }
+        		  Toast.makeText(getApplicationContext(), "In Item Selected", Toast.LENGTH_SHORT).show();
+        	  }
+        	  
+        	  @Override
+        	  public void onNothingSelected(AdapterView<?> parent){
+        		  Toast.makeText(getApplicationContext(), "Nothing Selected", Toast.LENGTH_SHORT).show();
+        	  }
+        	}); 
+        
+        
         
     }
 	
@@ -271,6 +284,7 @@ public class TabViewActivity extends TabActivity {
 		stopMessageUpdateService();
 		if(receiver != null){
 		unregisterReceiver(receiver);
+		receiver = null;
 		}	
 		} catch (Exception e){
 			e.printStackTrace();
@@ -347,6 +361,11 @@ public class TabViewActivity extends TabActivity {
 	    @Override
 	    protected void onPostExecute(String string) { 
 	        populateFriendlies();
+			if(receiver == null){
+			receiver = new InnerFriendUpdateReceiver();
+			registerReceiver(receiver, filter);   
+			}	        
+	        startMessageUpdateService();
 	        super.onPostExecute(string);
 	    }	    
 
@@ -380,6 +399,8 @@ public class TabViewActivity extends TabActivity {
 	public void setButtonText(){
 
 	}
+	
+
 	
 	@SuppressLint("DefaultLocale")
 	public String convertToFeet(float meters){

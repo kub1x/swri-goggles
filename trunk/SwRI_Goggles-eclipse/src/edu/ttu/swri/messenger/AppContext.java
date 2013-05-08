@@ -1,5 +1,7 @@
 package edu.ttu.swri.messenger;
 
+import java.util.ArrayList;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.provider.Settings.Secure;
@@ -13,7 +15,7 @@ import com.ttu_swri.goggles.persistence.impl.UserPrefsDAO;
 
 public class AppContext extends Application {
 
-	public static ElementDAO dao;
+	public static UserPrefsDAO dao;
 	private static final String friendLocationAction = "FRIEND_UPDATE";
 	private static final String friendMessageAction = "FRIEND_MESSAGE";
 	private static final String userLocationAction = "USER_LOCATION_CHANGED";
@@ -40,10 +42,11 @@ public class AppContext extends Application {
 	@Override
 	public void onCreate(){
 		dao = new UserPrefsDAO(getApplicationContext());
+		dao.deleteAllMates();		
 		projectId =  getResources().getString(R.string.project_id);
 		token =  getResources().getString(R.string.token);
 		settings = getSharedPreferences("prefs", 0);
-		AppContext.current_user_name = "GogglesUI";//settings.getString("selectedUser", "Goggles_UI");
+		AppContext.current_user_name = "GogglesDemo";//settings.getString("selectedUser", "Goggles_UI");
 		//AppContext.currrent_user_friend = getResources().getString(R.string.current_user_friend);
 		
 		String locationString = settings.getString(AppContext.current_user_name, "{\"description\":\"\",\"name\":\"Alex\",\"longitude\":-98.311491,\"latitude\":26.23413147,\"id\":\"cb08ba625f0009c6\",\"lastUpdate\":\"May 7, 2013 4:27:40 AM\",\"type\":\"T_MATE\"}");
@@ -62,6 +65,7 @@ public class AppContext extends Application {
 		}
 		uniqueDeviceId =  Secure.getString(getApplicationContext().getContentResolver(),
 	            Secure.ANDROID_ID) + "x"; 
+		dao.saveElementMates(getFriendlies());
 		super.onCreate();
 	}
 	
@@ -137,6 +141,19 @@ public class AppContext extends Application {
 
 	public static String getMessageBodyExtra() {
 		return messageBodyExtra;
+	}
+	
+	private ArrayList<ElementMate> getFriendlies(){
+		ArrayList<ElementMate> matesArray = new ArrayList<ElementMate>();
+		ElementMate mate = new ElementMate("Alex", "");
+		matesArray.add(mate);
+		mate = new ElementMate("Jakub", "");
+		matesArray.add(mate);
+		mate = new ElementMate("Sebastian", "");
+		matesArray.add(mate);		
+		mate = new ElementMate("Aotuo", "");
+		matesArray.add(mate);		
+		return matesArray;
 	}	
 
 

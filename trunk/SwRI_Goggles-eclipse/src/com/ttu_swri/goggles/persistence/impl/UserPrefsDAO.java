@@ -2,6 +2,7 @@ package com.ttu_swri.goggles.persistence.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import android.content.Context;
@@ -177,6 +178,17 @@ public class UserPrefsDAO implements ElementDAO {
 			mateList.add(gson.fromJson(matePrefs.getString(key, null), ElementMate.class));
 		}
 		return mateList;
+	}
+	
+	public ArrayList<ElementMessage> getMessagesFrom(String name){
+		 ArrayList<ElementMessage> allMessages = (ArrayList<ElementMessage>) this.getElementMessages();
+		 ArrayList<ElementMessage> userMessages = new ArrayList<ElementMessage>();
+		 for(ElementMessage em : allMessages){
+			 if(em.getFrom().equals(name)){
+				 userMessages.add(em);
+			 }
+		 }
+		 return userMessages;		
 	}
 
 }
