@@ -46,9 +46,9 @@ public class JakubSandboxActivity extends Activity {
 		dm.register(bv);
 
 		// Example data for testing POST
-		Element element = new ElementMessage("test",
-				"testing message for engage");
-		dm.update(element);
+		// Element element = new ElementMessage("test",
+		// "testing message for engage");
+		// dm.update(element);
 	}
 
 	@Override

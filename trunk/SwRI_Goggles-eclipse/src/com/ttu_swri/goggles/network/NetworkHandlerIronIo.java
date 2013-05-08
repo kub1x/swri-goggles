@@ -40,7 +40,7 @@ public class NetworkHandlerIronIo {
 	private static String QUEUE_OUT_NAME = "test_user";
 
 	private static String URL = "https://mq-aws-us-east-1.iron.io:443/1/projects/"
-			+ PROJECT_ID + "/queues";
+			+ PROJECT_ID + "/" + "queues";
 
 	/**
 	 * Method for posting updated or created elements Implementation of
@@ -74,28 +74,29 @@ public class NetworkHandlerIronIo {
 			e.printStackTrace();
 		}
 
+		String url = URL + "/" + QUEUE_OUT_NAME + "/" + "messages";
+
 		// Create request
 		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
-				URL + "/" + QUEUE_OUT_NAME + "/messages", WebMethod.POST, "1",
-				header, messages);
+				url, WebMethod.POST, "0", header, messages);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
 			@Override
-			public void onComplete(byte[] arg0, String arg1, String arg2,
+			public void onComplete(byte[] response, String arg1, String arg2,
 					String arg3) {
 				// DO NOTHING
 			}
 
 			@Override
-			public void onComplete(String arg0, String arg1, String arg2,
+			public void onComplete(String response, String arg1, String arg2,
 					String arg3) {
 				// DO NOTHING
-				Log.d(TAG, "Response to POST: \n" + arg0);
+				Log.d(TAG, "Response to POST: \n" + response);
 			}
 		};
 
-		Log.d(TAG, "Sending POST: \n" + messages.toString());
+		Log.d(TAG, "Sending: POST " + url + "\n" + messages.toString());
 
 		// Execute Web request with listener
 		this.send(context, wrb, wrl);
@@ -126,11 +127,12 @@ public class NetworkHandlerIronIo {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
+		String url = URL + "/" + QUEUE_IN_NAME + "/" + "messages";
+		
 		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
-				URL + "/" + QUEUE_IN_NAME + "/messages", WebMethod.GET, "1",
-				header, params);
+				url, WebMethod.GET, "1", header, params);
 
-		Log.d(TAG, "Sending GET");
+		Log.d(TAG, "Sending GET " + url);
 
 		this.send(context, wrb, wrl);
 	}
@@ -143,9 +145,10 @@ public class NetworkHandlerIronIo {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
+		String url = URL + "/" + QUEUE_IN_NAME + "/" + "messages" + "/" + msgId;
+
 		WebRequestBundle wrb = new WebRequestBundle("IntentFilterActionName",
-				URL + "/" + QUEUE_IN_NAME + "/messages/" + msgId,
-				WebMethod.DELETE, "1", header, params);
+				url, WebMethod.DELETE, "2", header, params);
 
 		// Create (empty) response listener
 		WebResponseListener wrl = new WebResponseListener() {
@@ -163,14 +166,15 @@ public class NetworkHandlerIronIo {
 			}
 		};
 
-		Log.d(TAG, "Sending DELETE:" + msgId);
+		Log.d(TAG, "Sending DELETE " + url);
 
 		this.send(context, wrb, wrl);
 	}
 
 	public void send(Context context, WebRequestBundle wrb,
 			WebResponseListener wrl) {
-		SDKWebService.httpRequest(context, false, 0, wrb, wrl);
+		synchronized (this) {
+			SDKWebService.httpRequest(context, false, 0, wrb, wrl);
+		}
 	}
-
 }

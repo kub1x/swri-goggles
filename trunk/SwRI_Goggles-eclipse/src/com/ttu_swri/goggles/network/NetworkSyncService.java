@@ -34,10 +34,6 @@ public class NetworkSyncService extends IntentService {
 		super(name);
 	}
 
-	// @Override
-	// public void onCreate() {
-	// }
-
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		sync();
@@ -54,6 +50,8 @@ public class NetworkSyncService extends IntentService {
 		// Singletons can be final here and so reused in callback
 		final NetworkHandlerIronIo nh = NetworkHandlerIronIo.getInstance();
 		final DataManager dm = DataManager.getInstance();
+		final List<String> ids = new ArrayList<String>();
+		final List<String> elements = new ArrayList<String>();
 
 		// Get new data from network
 		nh.get(getApplicationContext(), new WebResponseListener() {
@@ -61,20 +59,13 @@ public class NetworkSyncService extends IntentService {
 			public void onComplete(String response, String statusCode,
 					String statusId, String requestId) {
 				try {
-					Log.d(TAG, "Syncing...");
-
-					List<String> ids = new ArrayList<String>();
-					List<String> elements = new ArrayList<String>();
-
+					// Parsing and storing synchronized data
 					parseMessages(response, ids, elements);
+					
+					Log.d(TAG, "Response to GET: \n" + response);
 
-					dm.updateFromNetwork(elements);
-
-					// Update successfull, send deletes
-					for (String id : ids) {
-						nh.delete(getApplicationContext(), id);
-					}
 				} catch (JSONException e) {
+					Log.e(TAG, "Error parsing message from Iron.io");
 					e.printStackTrace();
 				}
 			}
@@ -86,6 +77,18 @@ public class NetworkSyncService extends IntentService {
 			}
 
 		});
+
+		try {
+			dm.updateFromNetwork(elements);
+		} catch (JSONException e) {
+			Log.e(TAG, "Error parsing elements obtainded through sync");
+			e.printStackTrace();
+		}
+		
+		// Update successful, send deletes
+		Log.d(TAG, "Gonna Delete " + ids.size() + " messages");
+		for (String id : ids)
+			nh.delete(getApplicationContext(), id);
 
 		// Send newly created or updated data
 		for (Element el : dm.getElementsToSync())
@@ -103,6 +106,7 @@ public class NetworkSyncService extends IntentService {
 	 */
 	public static void parseMessages(String json, List<String> ids,
 			List<String> elements) throws JSONException {
+		// Parsing message in format:
 		// {"messages":[{"id":"5824513078343549739","body":"hello","timeout":60}]}
 
 		// Parse the body of message
