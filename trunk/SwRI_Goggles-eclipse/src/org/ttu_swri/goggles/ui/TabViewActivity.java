@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.annotation.SuppressLint;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -83,11 +84,7 @@ public class TabViewActivity extends TabActivity {
     
     @Override
     protected void onPause(){
-		stopService(new Intent(this, edu.ttu.swri.messenger.location.LocationUpdateService.class));    	
-		stopService(new Intent(this, edu.ttu.swri.messenger.FriendUpdateService.class));
-		if(receiver != null){
-		unregisterReceiver(receiver);
-		}
+    	stopAllServices();
 		saveRelativeLocation();
 		saveSpinnerLastSelected();
 		saveButtonText();
@@ -100,7 +97,7 @@ public class TabViewActivity extends TabActivity {
 		setSpinnerToLastSelected();
 		setButtonText();			
     	super.onResume();
-    }    
+    }
     
 	public void updateFriends(){
 		new GetFriendsAsync().execute("","","");	
@@ -114,8 +111,7 @@ public class TabViewActivity extends TabActivity {
 		 }
 	}
 
-	private void setUpdatedFriendLocationText() {		
-			StringBuilder sb = new StringBuilder();
+	private void setUpdatedFriendLocationText() {					
 			try{
 				ElementMate friendLocation = AppContext.getCurrentUserFriendLatestLocation();
 				ElementMate myLocation = AppContext.getCurrentUserLatestLocation();
@@ -123,7 +119,9 @@ public class TabViewActivity extends TabActivity {
 				if(friendLocation == null || myLocation == null || friendLocation.getLatitude() == 0 
 						|| friendLocation.getLongitude() == 0 || myLocation.getLatitude() == 0
 						|| myLocation.getLongitude() == 0){
-					sb.append("N/A");
+					if(mDistanceToFriendly != null){
+						mDistanceToFriendly.setText("N/A");		
+						}					
 					return;
 				}
 
@@ -131,14 +129,14 @@ public class TabViewActivity extends TabActivity {
 				Location.distanceBetween(AppContext.getCurrentUserLatestLocation().getLatitude(), 
 						AppContext.getCurrentUserLatestLocation().getLongitude(), friendLocation.getLatitude()
 						, friendLocation.getLongitude(), computedDistance);
-		
+				
+				StringBuilder sb = new StringBuilder();
 				if(computedDistance[0] > -1){
 					String measure = computedDistance[0] < 800 ? " Ft " : " Mi ";
 					sb.append(convertToFeet(computedDistance[0]) + measure);
 				} else {
 					sb.append("N/A");
-				}
-				if(mDistanceToFriendly != null){
+				} if(mDistanceToFriendly != null){
 				mDistanceToFriendly.setText(sb.toString());
 				saveRelativeLocation();
 				setRelativeLocation();		
@@ -186,6 +184,7 @@ public class TabViewActivity extends TabActivity {
 				ElementMessage msg = gson.fromJson(intent.getExtras().getString("MESSAGE_BODY"), ElementMessage.class);
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(Long.valueOf(msg.getId()));
+				Toast.makeText(getApplicationContext(), msg.getText(), Toast.LENGTH_SHORT);
 			}
 		}
 
@@ -195,26 +194,28 @@ public class TabViewActivity extends TabActivity {
 	public void populateFriendlies(){
 		
 		/// send location for testing
-		LocationUpdateService locUpdate = new LocationUpdateService();		
-		locUpdate.sendLocationUpdate();	
-		
-		
-
+		//LocationUpdateService locUpdate = new LocationUpdateService();		
+		//locUpdate.sendLocationUpdate();	
     	ArrayList<ElementMate> friends = (ArrayList<ElementMate>) userPrefsDao.getElementMates();
     	ArrayList<String> friendlies = new ArrayList<String>();
     	if(friends == null ||friends.isEmpty()){
     		friendlies.add("None Found");
     	} else {
+			receiver = new InnerFriendUpdateReceiver();
+			if(receiver != null){
+			registerReceiver(receiver, filter);   
+			}
+			startMessageUpdateService(); 
     	for(int i = 0; i < friends.size(); i++){
     		friendlies.add(friends.get(i).getName());
     	}
     		
     	}
     	friendlies.add("Update List");
+    	
         lv = (ListView) findViewById(R.id.friendly_list);
         lvf = (ListView) findViewById(R.id.friendly_list_messages);
         
-        TextView tv = new TextView(getApplicationContext());
         ArrayAdapter<String> arrayAdapter =      
         new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, friendlies);
         lv.setAdapter(arrayAdapter);   
@@ -227,7 +228,7 @@ public class TabViewActivity extends TabActivity {
         	  @Override
         	  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
         		  if(lv.getItemAtPosition(position).toString().equals("Update List")){
-        			  stopServices();        		
+        			  stopFriendLocationUpdateService();        		
         			  updateFriends();
         		  }
         			AppContext.setCurrentUserFriend(lv.getItemAtPosition(position).toString());
@@ -247,16 +248,37 @@ public class TabViewActivity extends TabActivity {
         
     }
 	
-	private void stopServices(){
-		stopService(new Intent(this, edu.ttu.swri.messenger.location.LocationUpdateService.class));    	
+	private void stopFriendLocationUpdateService(){
 		stopService(new Intent(this, edu.ttu.swri.messenger.FriendUpdateService.class));
-		if(receiver != null){
-		unregisterReceiver(receiver);
-		}		
 	}
 	
-	public class GetFriendsAsync extends AsyncTask<String, String, String> {
-	    @Override
+	private void stopLocationUpdateService(){
+		stopService(new Intent(this, edu.ttu.swri.messenger.location.LocationUpdateService.class));
+	}
+	
+	private void stopMessageUpdateService(){
+		stopService(new Intent(this, edu.ttu.swri.messenger.MessageUpdateService.class));
+	}
+	
+	private void startMessageUpdateService(){
+		startService(new Intent(this, edu.ttu.swri.messenger.MessageUpdateService.class));
+	}
+	
+	private void stopAllServices(){
+		try{
+		stopLocationUpdateService();
+		stopFriendLocationUpdateService();
+		stopMessageUpdateService();
+		if(receiver != null){
+		unregisterReceiver(receiver);
+		}	
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public class GetFriendsAsync extends AsyncTask<String, String, String> {	   
+		@Override
 	    protected String doInBackground(String... str) {
 	    	 
 			Client client = new Client(AppContext.getProjectId(), AppContext.getToken(), Cloud.ironAWSUSEast);
@@ -278,9 +300,9 @@ public class TabViewActivity extends TabActivity {
 				ArrayList<ElementMate> friends = new ArrayList<ElementMate>();
 				
 				if(queueSize == 0){
-					friends.add(new ElementMate(AppContext.getUniqueDeviceId(), AppContext.getCurrentUserName(), "TTU Student", null));
-					userPrefsDao.deleteAllMates();
+					friends.add(new ElementMate(AppContext.getCurrentUserName(), AppContext.getCurrentUserName(), "TTU Student", null));
 					queue.push(gson.toJson(friends));
+					userPrefsDao.deleteAllMates();
 					return null;
 				}
 				
@@ -300,7 +322,7 @@ public class TabViewActivity extends TabActivity {
 				boolean userIsAdded = false;
 				int i = 0;
 				for(ElementMate friend : friends){
-					if(friend.getId().equals(AppContext.getUniqueDeviceId())){
+					if(friend.getId().equals(AppContext.getCurrentUserName())){
 						userIsAdded = true;
 						friends.remove(i++);
 						break;
@@ -311,12 +333,11 @@ public class TabViewActivity extends TabActivity {
 				userPrefsDao.saveElementMates(friends);
 				}
 				if(!userIsAdded){
-					friends.add(new ElementMate(AppContext.getUniqueDeviceId(), AppContext.getCurrentUserName(), "TTU Student", null));
+					friends.add(new ElementMate(AppContext.getCurrentUserName(), AppContext.getCurrentUserName(), "" , null));
 					queue.push(gson.toJson(friends));	
 				} else {
 					queue.push(msgJson);
 				}
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -324,8 +345,8 @@ public class TabViewActivity extends TabActivity {
 	    }
 	    
 	    @Override
-	    protected void onPostExecute(String string) {
-	    	populateFriendlies();
+	    protected void onPostExecute(String string) { 
+	        populateFriendlies();
 	        super.onPostExecute(string);
 	    }	    
 
@@ -360,13 +381,17 @@ public class TabViewActivity extends TabActivity {
 
 	}
 	
-	public int convertToFeet(float meters){
+	@SuppressLint("DefaultLocale")
+	public String convertToFeet(float meters){
 		//convert to feet
+		float toFeet = (float) 3.28084;
+		
 		if(meters < 800){
-			return (int) (meters * 3.28084);
+			return String.format("%.2f", (meters * toFeet));
 		}
-		return (int) (meters * .00062137);
-	}	
+		float toMiles = (float) .00062137;
+		return String.format("%.2f", (meters * toMiles));
+	}
 	
 
 }

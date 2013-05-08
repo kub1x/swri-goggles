@@ -9,8 +9,7 @@
                             android:layout_width="fill_parent" android:layout_height="wrap_content" />
                             
                     <FrameLayout android:id="@android:id/tabcontent"
-                            android:layout_width="fill_parent" android:layout_height="fill_parent" 
-                            android:background="#282828" > 
+                            android:layout_width="fill_parent" android:layout_height="fill_parent" > 
                            <!--  android:background="#282828"  -->
      
      						<!-- End Tab 1 -->

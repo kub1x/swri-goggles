@@ -52,12 +52,13 @@ public class LocationUpdateService extends Service {
 			 */
 			@Override
 			public void onLocationChanged(Location location) {
-				ElementMate mate = new ElementMate(AppContext.getUniqueDeviceId(), AppContext.getCurrentUserName(), "", location);
-				AppContext.setCurrentUserLatestLocation(mate);
+				ElementMate elementMate = new ElementMate(AppContext.getCurrentUserName(), AppContext.getCurrentUserName(), "", location);
+				AppContext.dao.saveElementMate(elementMate);
+				AppContext.setCurrentUserLatestLocation(elementMate);
 				Intent intent = new Intent();
 				intent.setAction((AppContext.getUserLocationAction()));
 				sendBroadcast(intent);
-				String serializedLocation = gson.toJson(mate); 
+				String serializedLocation = gson.toJson(elementMate); 
 					new SendLocationUpdateAsync().execute(serializedLocation, AppContext.getCurrentUserName());
 			}
 			

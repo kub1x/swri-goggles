@@ -2,16 +2,18 @@ package edu.ttu.swri.messenger;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.provider.Settings.Secure;
 
 import com.google.gson.Gson;
 import com.ttu_swri.datamodel.ElementMate;
 import com.ttu_swri.datamodel.ElementPoi;
 import com.ttu_swri.goggles.R;
+import com.ttu_swri.goggles.persistence.ElementDAO;
+import com.ttu_swri.goggles.persistence.impl.UserPrefsDAO;
 
 public class AppContext extends Application {
 
+	public static ElementDAO dao;
 	private static final String friendLocationAction = "FRIEND_UPDATE";
 	private static final String friendMessageAction = "FRIEND_MESSAGE";
 	private static final String userLocationAction = "USER_LOCATION_CHANGED";
@@ -37,6 +39,7 @@ public class AppContext extends Application {
 	
 	@Override
 	public void onCreate(){
+		dao = new UserPrefsDAO(getApplicationContext());
 		projectId =  getResources().getString(R.string.project_id);
 		token =  getResources().getString(R.string.token);
 		settings = getSharedPreferences("prefs", 0);

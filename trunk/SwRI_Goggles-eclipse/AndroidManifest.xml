@@ -98,6 +98,7 @@
             android:name="org.ttu_swri.goggles.ui.SendMessage"
             android:label="@string/title_activity_send_message" >
         </activity>
+        <service android:name="edu.ttu.swri.messenger.MessageUpdateService"></service>
     </application>
 
 </manifest>

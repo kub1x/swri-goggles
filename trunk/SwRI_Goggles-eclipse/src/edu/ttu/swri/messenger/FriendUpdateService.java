@@ -19,14 +19,13 @@ import com.ttu_swri.datamodel.ElementMate;
 public class FriendUpdateService extends Service {
 
 	private Timer t;
-
 	Gson gson;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		gson = new Gson();
 		t = new Timer();
-		t.schedule(new FriendLocationTimer(), 0, 5000);
+		t.schedule(new FriendLocationTask(), 0, 5000);
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -42,8 +41,12 @@ public class FriendUpdateService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	private boolean isValidMate(ElementMate mate){
+		return (mate != null && mate.getId() != null && !mate.getId().toString().trim().equals(""));
+	}	
 
-	private class FriendLocationTimer extends TimerTask {
+	private class FriendLocationTask extends TimerTask {
 
 		ElementMate location;
 
@@ -79,37 +82,13 @@ public class FriendUpdateService extends Service {
 					queue.deleteMessage(msg);
 					queue.push(msgBody);
 					location = gson.fromJson(msgBody, ElementMate.class);
+					if(isValidMate(location)){
+						AppContext.dao.saveElementMate(location);
+					}					
 					AppContext.setCurrentUserFriendLatestLocation(location);
 					Intent intent = new Intent();
 					intent.setAction((AppContext.getFriendLocationAction()));
-					intent.putExtra("FRIEND_NAME",
-							AppContext.getCurrrentUserFriend());
 					sendBroadcast(intent);
-				
-				// now check for messages
-				queue = client.queue(AppContext.getCurrentUserName()
-						+ "-im");
-				try{
-					queueSize = queue.getSize();
-				if (queueSize == 0) {
-					return;
-				}
-				} catch(IOException ioe){
-					if(ioe.getMessage().contains("Queue not found")){
-						queue.push("build this queue");
-						queue.clear();
-						return;
-					}
-				}
-				while(queueSize-- > 0){
-					msg = queue.get();
-					msgBody = msg.getBody();
-					queue.deleteMessage(msg);					
-					intent = new Intent();
-					intent.setAction((AppContext.getFriendMessageAction()));
-					intent.putExtra(AppContext.getMessageBodyExtra(), msgBody);
-					sendBroadcast(intent);
-				}
 
 			} catch (Exception e) {
 				e.printStackTrace();

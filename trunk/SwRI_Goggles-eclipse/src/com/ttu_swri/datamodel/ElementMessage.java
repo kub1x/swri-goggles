@@ -8,6 +8,7 @@ public class ElementMessage extends Element {
 	// String msg_id = null; // Is in Element.Id
 	private String topic = "";
 	private String text = "";
+	private String from = "";
 	private boolean isAlert = false;
 	private Date expires = null;
 
@@ -72,6 +73,15 @@ public class ElementMessage extends Element {
 		this.text = text;
 		this.justEdited();
 	}
+	
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+		this.justEdited();
+	}	
 
 	public boolean isAlert() {
 		return isAlert;
