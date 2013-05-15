@@ -18,8 +18,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.google.gson.Gson;
-import com.ttu_swri.datamodel.ElementMate;
 
+import edu.ttu.swri.data.model.ElementMate;
 import edu.ttu.swri.messenger.AppContext;
 
 public class LocationUpdateService extends Service {

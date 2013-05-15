@@ -14,7 +14,8 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.google.gson.Gson;
-import com.ttu_swri.datamodel.ElementMessage;
+
+import edu.ttu.swri.data.model.ElementMessage;
 
 public class MessageUpdateService extends Service {
 

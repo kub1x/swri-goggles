@@ -7,11 +7,12 @@ import android.content.SharedPreferences;
 import android.provider.Settings.Secure;
 
 import com.google.gson.Gson;
-import com.ttu_swri.datamodel.ElementMate;
-import com.ttu_swri.datamodel.ElementPoi;
 import com.ttu_swri.goggles.R;
-import com.ttu_swri.goggles.persistence.ElementDAO;
-import com.ttu_swri.goggles.persistence.impl.UserPrefsDAO;
+
+import edu.ttu.swri.data.model.ElementMate;
+import edu.ttu.swri.data.model.ElementPoi;
+import edu.ttu.swri.goggles.persistence.ElementDAO;
+import edu.ttu.swri.goggles.persistence.impl.UserPrefsDAO;
 
 public class AppContext extends Application {
 

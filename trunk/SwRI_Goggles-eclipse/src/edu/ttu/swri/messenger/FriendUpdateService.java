@@ -14,7 +14,8 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.google.gson.Gson;
-import com.ttu_swri.datamodel.ElementMate;
+
+import edu.ttu.swri.data.model.ElementMate;
 
 public class FriendUpdateService extends Service {
 
