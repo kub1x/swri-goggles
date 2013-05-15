@@ -1,51 +1,58 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:fillViewport="true" >
 
-    <Button
-        android:id="@+id/POI"
-        android:layout_width="180dp"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="29dp"
-        android:drawableLeft="@drawable/pois"
-        android:onClick="POIsButton"
-        android:padding="10dp"
-        android:text="@string/POI"
-        android:textStyle="bold" />
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/CurrentLocation"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:drawableLeft="@drawable/clocation"
-        android:onClick="CurrentLocationButton"
-        android:padding="10dp"
-        android:text="@string/CurrentLocation"
-        android:textStyle="bold" />
+        <Button
+            android:id="@+id/POI"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="29dp"
+            android:drawableLeft="@drawable/pois"
+            android:onClick="POIsButton"
+            android:padding="10dp"
+            android:text="@string/POI"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/FriendsLocation"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:drawableLeft="@drawable/flocation"
-        android:onClick="FriendsLocationButton"
-        android:padding="10dp"
-        android:text="@string/FriendsLocation"
-        android:textStyle="bold" />
+        <Button
+            android:id="@+id/CurrentLocation"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:drawableLeft="@drawable/clocation"
+            android:onClick="CurrentLocationButton"
+            android:padding="10dp"
+            android:text="@string/CurrentLocation"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/Messages"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:drawableLeft="@drawable/messages"
-        android:onClick="MessagesButton"
-        android:padding="10dp"
-        android:text="@string/Messages"
-        android:textStyle="bold" />
+        <Button
+            android:id="@+id/FriendsLocation"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:drawableLeft="@drawable/flocation"
+            android:onClick="FriendsLocationButton"
+            android:padding="10dp"
+            android:text="@string/FriendsLocation"
+            android:textStyle="bold" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/Messages"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:drawableLeft="@drawable/messages"
+            android:onClick="MessagesButton"
+            android:padding="10dp"
+            android:text="@string/Messages"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</ScrollView>
