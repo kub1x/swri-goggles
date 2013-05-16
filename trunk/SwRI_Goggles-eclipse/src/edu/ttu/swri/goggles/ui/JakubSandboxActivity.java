@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,6 +20,50 @@ public class JakubSandboxActivity extends Activity {
 	private static final String TAG = JakubSandboxActivity.class
 			.getSimpleName();
 
+	// ========================================================================
+	// ========================================================================
+	// ========================================================================
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		// Let's handle D-pad events
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_DPAD_LEFT:
+			// To the sides, it will circulate between Views: dashboard, map, POIlist, Userlist
+			break;
+
+		case KeyEvent.KEYCODE_DPAD_RIGHT:
+			// To the sides, it will circulate between Views: dashboard, map, POIlist, Userlist
+			break;
+
+		case KeyEvent.KEYCODE_DPAD_UP:
+			// Up and down, it will control the view itself: on dashboard it will highlight messages, on map it will zoom in/out, on lists it will iterate through list
+			break;
+
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+			// Up and down, it will control the view itself: on dashboard it will highlight messages, on map it will zoom in/out, on lists it will iterate through list
+			break;
+
+		case KeyEvent.KEYCODE_DPAD_CENTER:
+			// On lists this will select highlighted item, on map.. who knows
+			break;
+
+		default:
+			// Any other event will be sent to our superclass (View)
+			return super.onKeyDown(keyCode, event);
+		}
+
+		return false;
+	}
+
+	// ========================================================================
+	// ========================================================================
+	// ========================================================================
+	
+	
+	
+	
 	// TODO COPY THIS
 	private SensorManager mSensorManager;
 	private ArrowView mArrowView; // see ArrowView class below
