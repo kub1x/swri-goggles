@@ -1,5 +1,6 @@
 package edu.ttu.swri.goggles.ui;
 
+import edu.ttu.swri.goggles.R;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -14,9 +15,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.ttu_swri.goggles.R;
-
 public class JakubSandboxActivity extends Activity {
+	@SuppressWarnings("unused")
 	private static final String TAG = JakubSandboxActivity.class
 			.getSimpleName();
 
